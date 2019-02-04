@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#242424"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_marginTop="20dp"
+        android:id="@+id/tv_name"
+        android:gravity="center_horizontal"
+        android:text="告白气球"
+        android:textColor="#F6F6F6"
+        android:textSize="36sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_marginTop="10dp"
+        android:id="@+id/tv_singer"
+        android:textColor="#F6F6F6"
+        android:text="周杰伦"
+        android:textSize="18sp"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+
+        android:layout_height="0dp" />
+
+</LinearLayout>
