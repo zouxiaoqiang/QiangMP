@@ -8,6 +8,11 @@
     android:orientation="vertical"
     tools:context=".activity.SearchActivity">
 
+    <include
+        layout="@layout/activity_base"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -55,73 +60,5 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/tv_current_time"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:text="00:00"
-            android:textColor="#F6F6F6"
-            android:textSize="18sp" />
-
-        <SeekBar
-            android:id="@+id/seek_bar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="3" />
-
-        <TextView
-            android:id="@+id/tv_duration"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:text="00:00"
-            android:textColor="#F6F6F6"
-            android:textSize="18sp" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <ImageButton
-            android:id="@+id/ibtn_previous_music"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:background="@drawable/ic_skip_previous_white_48dp" />
-
-        <ImageButton
-            android:id="@+id/ibtn_play"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_marginLeft="200dp"
-            android:layout_marginRight="200dp"
-            android:background="#242424"
-            android:src="@drawable/ic_play_circle_outline_white_48dp" />
-
-        <ImageButton
-            android:id="@+id/ibtn_next_music"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:background="@drawable/ic_skip_next_white_48dp" />
-
-    </LinearLayout>
 
 </LinearLayout>

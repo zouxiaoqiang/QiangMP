@@ -1,4 +1,4 @@
-package com.qiang.qiangmp.fragment.music_search;
+package com.qiang.qiangmp.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -41,16 +41,16 @@ public abstract class BaseMusicSearchFragment extends Fragment {
         listView = view.findViewById(R.id.lv);
         songAdapter = new SongAdapter(getActivity(), songList);
         listView.setAdapter(songAdapter);
-        listView.setOnItemClickListener((parent, view1, position, id) -> {
-            Song song = songList.get(position);
-            String url = song.getUrl();
-            new Thread(() -> {
-                Intent i = new Intent(getActivity(), MusicPlayService.class);
-                i.putExtra("song_url", url);
-                i.putExtra("position", position);
-                Objects.requireNonNull(getActivity()).startService(i);
-            }).start();
-        });
+//        listView.setOnItemClickListener((parent, view1, position, id) -> {
+//            Song song = songList.get(position);
+//            String url = song.getUrl();
+//            new Thread(() -> {
+//                Intent i = new Intent(getActivity(), MusicPlayService.class);
+//                i.putExtra("song_url", url);
+//                i.putExtra("position", position);
+//                Objects.requireNonNull(getActivity()).startService(i);
+//            }).start();
+//        });
         super.onViewCreated(view, savedInstanceState);
     }
 

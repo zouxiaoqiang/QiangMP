@@ -2,16 +2,14 @@ package com.qiang.qiangmp.adapter;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.ViewGroup;
 
-import com.qiang.qiangmp.fragment.music_search.BaseMusicSearchFragment;
-import com.qiang.qiangmp.fragment.music_search.KuGouMusicFragment;
-import com.qiang.qiangmp.fragment.music_search.NeteaseMusicFragment;
-import com.qiang.qiangmp.fragment.music_search.QQMusicFragment;
-import com.qiang.qiangmp.util.BaseMusicSearch;
+import com.qiang.qiangmp.fragment.BaseMusicSearchFragment;
+import com.qiang.qiangmp.fragment.KuGouMusicFragment;
+import com.qiang.qiangmp.fragment.NeteaseMusicFragment;
+import com.qiang.qiangmp.fragment.QQMusicFragment;
 
 /**
  * @author xiaoq
