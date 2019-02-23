@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.qiang.qiangmp.R;
 import com.qiang.qiangmp.bean.Song;
 import com.qiang.qiangmp.service.MusicPlayService;
+import com.qiang.qiangmp.util.Player;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -44,11 +45,15 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
     /**
      * 当前歌曲位置
      */
-    public int globalSongPos;
+    public static int globalSongPos;
     /**
      * 当前缓存歌曲列表， 默认为空
      */
     public static List<Song> globalSongList;
+    /**
+     * 当前歌曲时长
+     */
+    public static int duration = 0;
     private SeekBar mSeekBar;
     private TextView mTextViewCurrentTime, mTextViewDuration;
     private ImageButton mIbtnPlay, mIbtnPrevious, mIbtnNext;
@@ -81,6 +86,13 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
         IntentFilter filter = new IntentFilter();
         filter.addAction(MusicPlayBroadcast.MUSIC_TIME_ACTION);
         Objects.requireNonNull(getActivity()).registerReceiver(musicPlayBroadcast, filter);
+        if (player != null) {
+            int time = Player.mediaPlayer.getDuration();
+            Intent i = new Intent("com.qiang.qiangmp.musictime");
+            i.putExtra("time", time);
+            i.putExtra("type", DURATION_TYPE);
+            getActivity().sendBroadcast(i);
+        }
         super.onViewCreated(view, savedInstanceState);
     }
 
@@ -129,7 +141,7 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
         }
     }
 
-     /**
+    /**
      * 接收MusicPlayService发送的当前播放时间和总时长
      */
     public class MusicPlayBroadcast extends BroadcastReceiver {
@@ -140,24 +152,33 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
             int type = intent.getIntExtra("type", 0);
             // 毫秒
             int time = intent.getIntExtra("time", 0);
-            Date dateDuration = new Date(time);
+            Date date = new Date(time);
             @SuppressLint("SimpleDateFormat")
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
             switch (type) {
                 case DURATION_TYPE:
+                    duration = time;
                     mIsPause = !mIsPause;
                     setPlayState();
                     mSeekBar.setMax(time);
-                    mTextViewDuration.setText(simpleDateFormat.format(dateDuration));
+                    mTextViewDuration.setText(simpleDateFormat.format(date));
                     break;
                 case CURRENT_TIME_TYPE:
                     mSeekBar.setProgress(time);
-                    mTextViewCurrentTime.setText(simpleDateFormat.format(dateDuration));
+                    mTextViewCurrentTime.setText(simpleDateFormat.format(date));
                     break;
                 default:
                     break;
             }
         }
+    }
+
+    public void setDuration() {
+        Date date = new Date(duration);
+        @SuppressLint("SimpleDateFormat")
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
+        mSeekBar.setMax(duration);
+        mTextViewDuration.setText(simpleDateFormat.format(date));
     }
 
 

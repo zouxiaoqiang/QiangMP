@@ -49,10 +49,6 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
      */
     private String s;
     private MusicSearchFragmentPagerAdapter mFragmentPagerAdapter;
-    /**
-     * 记录暂停状态
-     */
-    private boolean mIsPause = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
