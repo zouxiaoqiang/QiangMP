@@ -7,9 +7,9 @@ import android.util.Log;
 
 import com.qiang.qiangmp.util.Player;
 
-import static com.qiang.qiangmp.activity.SearchActivity.CURRENT_TIME_TYPE;
-import static com.qiang.qiangmp.activity.SearchActivity.DURATION_TYPE;
 import static com.qiang.qiangmp.activity.SearchActivity.player;
+import static com.qiang.qiangmp.fragment.PlayingControlBarFragment.CURRENT_TIME_TYPE;
+import static com.qiang.qiangmp.fragment.PlayingControlBarFragment.DURATION_TYPE;
 
 /**
  * @author xiaoq
@@ -37,7 +37,6 @@ public class MusicPlayService extends Service {
             Intent i = new Intent("com.qiang.qiangmp.musictime");
             i.putExtra("time", time);
             i.putExtra("type", DURATION_TYPE);
-            i.putExtra("position", position);
             sendBroadcast(i);
             new MusicTimeThread().start();
         });

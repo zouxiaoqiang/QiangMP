@@ -1,6 +1,7 @@
 package com.qiang.qiangmp.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -33,8 +35,6 @@ import java.util.List;
 public class SearchActivity extends BaseActivity implements View.OnClickListener {
     private static final String TAG = "SearchActivity";
 
-    public static final int DURATION_TYPE = 1;
-    public static final int CURRENT_TIME_TYPE = 2;
 
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
@@ -48,10 +48,6 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
      * 搜索关键词
      */
     private String s;
-//    private SeekBar mSeekBar;
-//    private TextView mTextViewCurrentTime, mTextViewDuration;
-//    private ImageButton mIbtnPlay, mIbtnPrevious, mIbtnNext;
-//    private MusicPlayBroadcast musicPlayBroadcast;
     private MusicSearchFragmentPagerAdapter mFragmentPagerAdapter;
     /**
      * 记录暂停状态
@@ -87,15 +83,6 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
             }
         });
 
-//        mSeekBar = findViewById(R.id.seek_bar);
-//        mTextViewCurrentTime = findViewById(R.id.tv_current_time);
-//        mTextViewDuration = findViewById(R.id.tv_duration);
-//        mIbtnPlay = findViewById(R.id.ibtn_play);
-//        mIbtnPrevious = findViewById(R.id.ibtn_previous_music);
-//        mIbtnNext = findViewById(R.id.ibtn_next_music);
-//        mIbtnPlay.setOnClickListener(this);
-//        mIbtnNext.setOnClickListener(this);
-//        mIbtnPrevious.setOnClickListener(this);
         ImageButton imgBtnBack = findViewById(R.id.ibtn_back);
         imgBtnBack.setOnClickListener(this);
         EditText edtSearch = findViewById(R.id.edt_search);
@@ -110,18 +97,6 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
             return false;
         });
 
-        // 注册广播, 设置SeekBar的进度
-//        musicPlayBroadcast = new MusicPlayBroadcast();
-//        IntentFilter filter = new IntentFilter();
-//        filter.addAction(MusicPlayBroadcast.MUSIC_TIME_ACTION);
-//        filter.addAction(MusicPlayBroadcast.SONG_POSITION);
-//        registerReceiver(musicPlayBroadcast, filter);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-//        unregisterReceiver(musicPlayBroadcast);
     }
 
     @Override
@@ -130,85 +105,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
             case R.id.ibtn_back:
                 finish();
                 break;
-//            case R.id.ibtn_play:
-//                Log.d(TAG, "play");
-//                if (player != null) {
-//                    mIsPause = !mIsPause;
-//                    setPlayState();
-//                }
-//                break;
-//            case R.id.ibtn_next_music:
-//                if (player != null) {
-//                    List<Song> list = mFragmentPagerAdapter.getCurrentFragment().getSongList();
-//                    position = (position + 1) % list.size();
-//                    Song song = list.get(position);
-//                    String url = song.getUrl();
-//                    new Thread(() -> {
-//                        Intent i = new Intent(this, MusicPlayService.class);
-//                        i.putExtra("song_url", url);
-//                        i.putExtra("position", position);
-//                        startService(i);
-//                    }).start();
-//                }
-//                break;
-//            case R.id.ibtn_previous_music:
-//                if (player != null) {
-//                    List<Song> list = mFragmentPagerAdapter.getCurrentFragment().getSongList();
-//                    position = (position + list.size() - 1) % list.size();
-//                    Song song = list.get(position);
-//                    String url = song.getUrl();
-//                    new Thread(() -> {
-//                        Intent i = new Intent(this, MusicPlayService.class);
-//                        i.putExtra("song_url", url);
-//                        i.putExtra("position", position);
-//                        startService(i);
-//                    }).start();
-//                }
-//                break;
             default:
         }
     }
-
-    /**
-     * 接收MusicPlayService发送的当前播放时间和总时长
-     */
-//    public class MusicPlayBroadcast extends BroadcastReceiver {
-//        public static final String SONG_POSITION = "com.qiang.qiangmp.songposition";
-//        public static final String MUSIC_TIME_ACTION = "com.qiang.qiangmp.musictime";
-//
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            int type = intent.getIntExtra("type", 0);
-//            // 毫秒
-//            int time = intent.getIntExtra("time", 0);
-//            Date dateDuration = new Date(time);
-//            @SuppressLint("SimpleDateFormat")
-//            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
-//            switch (type) {
-//                case DURATION_TYPE:
-//                    position = intent.getIntExtra("position", 0);
-//                    mIsPause = !mIsPause;
-//                    setPlayState();
-//                    mSeekBar.setMax(time);
-//                    mTextViewDuration.setText(simpleDateFormat.format(dateDuration));
-//                    break;
-//                case CURRENT_TIME_TYPE:
-//                    mSeekBar.setProgress(time);
-//                    mTextViewCurrentTime.setText(simpleDateFormat.format(dateDuration));
-//                    break;
-//                default:
-//                    break;
-//            }
-//        }
-//    }
-
-//    private void setPlayState() {
-//        if (mIsPause) {
-//            player.pause();
-//            mIbtnPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_circle_outline_white_48dp, null));
-//        } else {
-//            player.start();
-//            mIbtnPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_48dp, null));
-//        }
-//    }
 }

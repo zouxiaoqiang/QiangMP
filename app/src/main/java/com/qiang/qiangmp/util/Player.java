@@ -6,7 +6,6 @@ import android.media.MediaPlayer;
 
 import java.io.IOException;
 
-import static com.qiang.qiangmp.activity.SearchActivity.DURATION_TYPE;
 
 public class Player {
     public static MediaPlayer mediaPlayer;
