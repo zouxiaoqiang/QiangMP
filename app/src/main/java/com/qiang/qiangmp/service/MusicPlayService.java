@@ -6,10 +6,9 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.qiang.qiangmp.util.Player;
+import com.qiang.qiangmp.util.QiangMPConstants;
 
 import static com.qiang.qiangmp.activity.SearchActivity.player;
-import static com.qiang.qiangmp.fragment.PlayingControlBarFragment.CURRENT_TIME_TYPE;
-import static com.qiang.qiangmp.fragment.PlayingControlBarFragment.DURATION_TYPE;
 
 /**
  * @author xiaoq
@@ -26,7 +25,6 @@ public class MusicPlayService extends Service {
 
     private void startNewMusic(Intent intent) {
         String url = intent.getStringExtra("song_url");
-        int position = intent.getIntExtra("position", 0);
         if (player == null) {
             player = new Player();
         }
@@ -36,7 +34,7 @@ public class MusicPlayService extends Service {
             int time = Player.mediaPlayer.getDuration();
             Intent i = new Intent("com.qiang.qiangmp.musictime");
             i.putExtra("time", time);
-            i.putExtra("type", DURATION_TYPE);
+            i.putExtra("type", QiangMPConstants.DURATION_TYPE);
             sendBroadcast(i);
             new MusicTimeThread().start();
         });
@@ -56,7 +54,7 @@ public class MusicPlayService extends Service {
                     int time = Player.mediaPlayer.getCurrentPosition();
                     Intent intent = new Intent("com.qiang.qiangmp.musictime");
                     intent.putExtra("time", time);
-                    intent.putExtra("type", CURRENT_TIME_TYPE);
+                    intent.putExtra("type", QiangMPConstants.CURRENT_TIME_TYPE);
                     sendBroadcast(intent);
                 }
                 try {

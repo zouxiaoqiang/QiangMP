@@ -35,15 +35,8 @@ import java.util.List;
 public class SearchActivity extends BaseActivity implements View.OnClickListener {
     private static final String TAG = "SearchActivity";
 
-
-    private TabLayout mTabLayout;
-    private ViewPager mViewPager;
-    /**
-     * 当前歌曲在列表中的位置
-     */
-    private int position;
-
     public static Player player;
+
     /**
      * 搜索关键词
      */
@@ -56,12 +49,12 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         setContentView(R.layout.activity_search);
 
         // 将ViewPager和Fragment绑定
-        mViewPager = findViewById(R.id.viewpager);
+        ViewPager mViewPager = findViewById(R.id.viewpager);
         mFragmentPagerAdapter = new MusicSearchFragmentPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mFragmentPagerAdapter);
 
         // 将ViewPager和TabLayout绑定
-        mTabLayout = findViewById(R.id.tablayout);
+        TabLayout mTabLayout = findViewById(R.id.tablayout);
         mTabLayout.setupWithViewPager(mViewPager);
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

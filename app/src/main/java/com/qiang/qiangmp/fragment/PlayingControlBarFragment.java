@@ -20,6 +20,7 @@ import com.qiang.qiangmp.R;
 import com.qiang.qiangmp.bean.Song;
 import com.qiang.qiangmp.service.MusicPlayService;
 import com.qiang.qiangmp.util.Player;
+import com.qiang.qiangmp.util.QiangMPConstants;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,10 +34,8 @@ import static com.qiang.qiangmp.activity.SearchActivity.player;
  * @author xiaoq
  * @date 19-2-16
  */
-public class PlayingControlBarFragment extends Fragment implements View.OnClickListener {
+public class PlayingControlBarFragment extends Fragment implements View.OnClickListener{
 
-    public static final int DURATION_TYPE = 1;
-    public static final int CURRENT_TIME_TYPE = 2;
 
     /**
      * 记录暂停状态
@@ -56,7 +55,7 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
     public static int duration = 0;
     private SeekBar mSeekBar;
     private TextView mTextViewCurrentTime, mTextViewDuration;
-    private ImageButton mIbtnPlay, mIbtnPrevious, mIbtnNext;
+    private ImageButton mIbtnPlay;
     private MusicPlayBroadcast musicPlayBroadcast;
 
     public PlayingControlBarFragment() {
@@ -76,8 +75,8 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
         mTextViewCurrentTime = view.findViewById(R.id.tv_current_time);
         mTextViewDuration = view.findViewById(R.id.tv_duration);
         mIbtnPlay = view.findViewById(R.id.ibtn_play);
-        mIbtnPrevious = view.findViewById(R.id.ibtn_previous_music);
-        mIbtnNext = view.findViewById(R.id.ibtn_next_music);
+        ImageButton mIbtnPrevious = view.findViewById(R.id.ibtn_previous_music);
+        ImageButton mIbtnNext = view.findViewById(R.id.ibtn_next_music);
         mIbtnPlay.setOnClickListener(this);
         mIbtnNext.setOnClickListener(this);
         mIbtnPrevious.setOnClickListener(this);
@@ -90,7 +89,7 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
             int time = Player.mediaPlayer.getDuration();
             Intent i = new Intent("com.qiang.qiangmp.musictime");
             i.putExtra("time", time);
-            i.putExtra("type", DURATION_TYPE);
+            i.putExtra("type", QiangMPConstants.DURATION_TYPE);
             getActivity().sendBroadcast(i);
         }
         super.onViewCreated(view, savedInstanceState);
@@ -114,31 +113,29 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
             case R.id.ibtn_next_music:
                 if (player != null && !globalSongList.isEmpty()) {
                     globalSongPos = (globalSongPos + 1) % globalSongList.size();
-                    Song song = globalSongList.get(globalSongPos);
-                    String url = song.getUrl();
-                    new Thread(() -> {
-                        Intent i = new Intent(getActivity(), MusicPlayService.class);
-                        i.putExtra("song_url", url);
-                        i.putExtra("position", globalSongPos);
-                        getActivity().startService(i);
-                    }).start();
+                    startMusicPlayerService();
                 }
                 break;
             case R.id.ibtn_previous_music:
                 if (player != null && !globalSongList.isEmpty()) {
                     globalSongPos = (globalSongPos + globalSongList.size() - 1) % globalSongList.size();
-                    Song song = globalSongList.get(globalSongPos);
-                    String url = song.getUrl();
-                    new Thread(() -> {
-                        Intent i = new Intent(getActivity(), MusicPlayService.class);
-                        i.putExtra("song_url", url);
-                        i.putExtra("position", globalSongPos);
-                        getActivity().startService(i);
-                    }).start();
+                    startMusicPlayerService();
                 }
                 break;
             default:
         }
+    }
+
+    /**
+     * 播放前/后一首歌曲，开启MusicPlayerService
+     */
+    private void startMusicPlayerService() {
+        Song song = globalSongList.get(globalSongPos);
+        String url = song.getUrl();
+        Intent i = new Intent(getActivity(), MusicPlayService.class);
+        i.putExtra("song_url", url);
+        i.putExtra("position", globalSongPos);
+        Objects.requireNonNull(getActivity()).startService(i);
     }
 
     /**
@@ -156,14 +153,14 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
             @SuppressLint("SimpleDateFormat")
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
             switch (type) {
-                case DURATION_TYPE:
+                case QiangMPConstants.DURATION_TYPE:
                     duration = time;
                     mIsPause = !mIsPause;
                     setPlayState();
                     mSeekBar.setMax(time);
                     mTextViewDuration.setText(simpleDateFormat.format(date));
                     break;
-                case CURRENT_TIME_TYPE:
+                case QiangMPConstants.CURRENT_TIME_TYPE:
                     mSeekBar.setProgress(time);
                     mTextViewCurrentTime.setText(simpleDateFormat.format(date));
                     break;
@@ -172,15 +169,6 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
             }
         }
     }
-
-    public void setDuration() {
-        Date date = new Date(duration);
-        @SuppressLint("SimpleDateFormat")
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
-        mSeekBar.setMax(duration);
-        mTextViewDuration.setText(simpleDateFormat.format(date));
-    }
-
 
     private void setPlayState() {
         if (mIsPause) {

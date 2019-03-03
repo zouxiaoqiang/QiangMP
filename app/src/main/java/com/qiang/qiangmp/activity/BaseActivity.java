@@ -1,5 +1,6 @@
 package com.qiang.qiangmp.activity;
 
+import android.content.pm.PackageManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // 不显示ActionBar
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         showPlayingControlBar(true);
     }

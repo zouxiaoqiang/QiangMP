@@ -31,14 +31,13 @@ import java.util.Objects;
  */
 public abstract class BaseMusicSearchFragment extends Fragment {
     private List<Song> songList = new ArrayList<>();
-    private ListView listView;
     private SongAdapter songAdapter;
     private RequestQueue requestQueue;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         requestQueue = Volley.newRequestQueue(Objects.requireNonNull(getActivity()));
-        listView = view.findViewById(R.id.lv);
+        ListView listView = view.findViewById(R.id.lv);
         songAdapter = new SongAdapter(getActivity(), songList);
         listView.setAdapter(songAdapter);
         listView.setOnItemClickListener((parent, view1, position, id) -> {
@@ -85,11 +84,6 @@ public abstract class BaseMusicSearchFragment extends Fragment {
                 Toast.LENGTH_SHORT).show());
         requestQueue.add(searchMusic);
     }
-
-    public List<Song> getSongList() {
-        return songList;
-    }
-
 
     /**
      * 获取相关的搜索路径
