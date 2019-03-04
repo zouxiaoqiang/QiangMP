@@ -45,11 +45,9 @@ public abstract class BaseMusicSearchFragment extends Fragment {
             PlayingControlBarFragment.globalSongList.addAll(songList);
             Song song = songList.get(position);
             String url = song.getUrl();
-            new Thread(() -> {
-                Intent i = new Intent(getActivity(), MusicPlayService.class);
-                i.putExtra("song_url", url);
-                Objects.requireNonNull(getActivity()).startService(i);
-            }).start();
+            Intent i = new Intent(getActivity(), MusicPlayService.class);
+            i.putExtra("song_url", url);
+            Objects.requireNonNull(getActivity()).startService(i);
         });
         super.onViewCreated(view, savedInstanceState);
     }

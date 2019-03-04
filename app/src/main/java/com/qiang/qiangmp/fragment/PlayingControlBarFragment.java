@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.qiang.qiangmp.R;
 import com.qiang.qiangmp.bean.Song;
 import com.qiang.qiangmp.service.MusicPlayService;
+import com.qiang.qiangmp.util.MyLog;
 import com.qiang.qiangmp.util.Player;
 import com.qiang.qiangmp.util.QiangMPConstants;
 
@@ -34,13 +35,13 @@ import static com.qiang.qiangmp.activity.SearchActivity.player;
  * @author xiaoq
  * @date 19-2-16
  */
-public class PlayingControlBarFragment extends Fragment implements View.OnClickListener{
+public class PlayingControlBarFragment extends Fragment implements View.OnClickListener {
 
 
     /**
      * 记录暂停状态
      */
-    private boolean mIsPause = true;
+    private static boolean mIsPause;
     /**
      * 当前歌曲位置
      */
@@ -49,19 +50,23 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
      * 当前缓存歌曲列表， 默认为空
      */
     public static List<Song> globalSongList;
-    /**
-     * 当前歌曲时长
-     */
-    public static int duration = 0;
+
     private SeekBar mSeekBar;
     private TextView mTextViewCurrentTime, mTextViewDuration;
     private ImageButton mIbtnPlay;
-    private MusicPlayBroadcast musicPlayBroadcast;
+    private MusicPlayBroadcastReceiver mMusicPlayBroadcastReceiver;
 
-    public PlayingControlBarFragment() {
+    private static IntentFilter musicPlayerFilter = new IntentFilter();
+
+    static {
+        mIsPause = true;
         globalSongList = new ArrayList<>();
         globalSongPos = -1;
+        musicPlayerFilter.addAction(QiangMPConstants.ACTION_SONG_PLAY);
+        musicPlayerFilter.addAction(QiangMPConstants.ACTION_SONG_CURRENT_POSITION);
+        musicPlayerFilter.addAction(QiangMPConstants.ACTION_SONG_DURATION);
     }
+
 
     @Nullable
     @Override
@@ -71,6 +76,12 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        initView(view);
+        onChangeActivityInit();
+        super.onViewCreated(view, savedInstanceState);
+    }
+
+    private void initView(View view) {
         mSeekBar = view.findViewById(R.id.seek_bar);
         mTextViewCurrentTime = view.findViewById(R.id.tv_current_time);
         mTextViewDuration = view.findViewById(R.id.tv_duration);
@@ -80,25 +91,29 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
         mIbtnPlay.setOnClickListener(this);
         mIbtnNext.setOnClickListener(this);
         mIbtnPrevious.setOnClickListener(this);
-        // 注册广播, 设置SeekBar的进度
-        musicPlayBroadcast = new MusicPlayBroadcast();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(MusicPlayBroadcast.MUSIC_TIME_ACTION);
-        Objects.requireNonNull(getActivity()).registerReceiver(musicPlayBroadcast, filter);
-        if (player != null) {
-            int time = Player.mediaPlayer.getDuration();
-            Intent i = new Intent("com.qiang.qiangmp.musictime");
-            i.putExtra("time", time);
-            i.putExtra("type", QiangMPConstants.DURATION_TYPE);
-            getActivity().sendBroadcast(i);
-        }
-        super.onViewCreated(view, savedInstanceState);
+    }
+
+    /**
+     * receiver接收广播，控制播放栏图标的变化，播放状态的变化
+     * 在fragment可见时，注册receiver
+     * 不可见时，注销receiver
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        mMusicPlayBroadcastReceiver = new MusicPlayBroadcastReceiver();
+        Objects.requireNonNull(getActivity()).registerReceiver(mMusicPlayBroadcastReceiver, musicPlayerFilter);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Objects.requireNonNull(getActivity()).unregisterReceiver(mMusicPlayBroadcastReceiver);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Objects.requireNonNull(getActivity()).unregisterReceiver(musicPlayBroadcast);
     }
 
     @Override
@@ -112,12 +127,20 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
                 break;
             case R.id.ibtn_next_music:
                 if (player != null && !globalSongList.isEmpty()) {
+                    if (!mIsPause) {
+                        mIsPause = true;
+                        setPlayState();
+                    }
                     globalSongPos = (globalSongPos + 1) % globalSongList.size();
                     startMusicPlayerService();
                 }
                 break;
             case R.id.ibtn_previous_music:
                 if (player != null && !globalSongList.isEmpty()) {
+                    if (!mIsPause) {
+                        mIsPause = true;
+                        setPlayState();
+                    }
                     globalSongPos = (globalSongPos + globalSongList.size() - 1) % globalSongList.size();
                     startMusicPlayerService();
                 }
@@ -141,28 +164,28 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
     /**
      * 接收MusicPlayService发送的当前播放时间和总时长
      */
-    public class MusicPlayBroadcast extends BroadcastReceiver {
-        public static final String MUSIC_TIME_ACTION = "com.qiang.qiangmp.musictime";
+    public class MusicPlayBroadcastReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            int type = intent.getIntExtra("type", 0);
-            // 毫秒
-            int time = intent.getIntExtra("time", 0);
-            Date date = new Date(time);
-            @SuppressLint("SimpleDateFormat")
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
-            switch (type) {
-                case QiangMPConstants.DURATION_TYPE:
-                    duration = time;
+            MyLog.d("onReceive", intent.getAction());
+            int serialNum = intent.getIntExtra("serial_num", 0);
+            int time;
+            switch (serialNum) {
+                case QiangMPConstants.NUM_SONG_DURATION:
+                    // 毫秒
+                    time = intent.getIntExtra("time", 0);
+                    mSeekBar.setMax(time);
+                    mTextViewDuration.setText(formatDate(time));
+                    break;
+                case QiangMPConstants.NUM_SONG_CURRENT_POSITION:
+                    time = intent.getIntExtra("time", 0);
+                    mSeekBar.setProgress(time);
+                    mTextViewCurrentTime.setText(formatDate(time));
+                    break;
+                case QiangMPConstants.NUM_SONG_PLAY:
                     mIsPause = !mIsPause;
                     setPlayState();
-                    mSeekBar.setMax(time);
-                    mTextViewDuration.setText(simpleDateFormat.format(date));
-                    break;
-                case QiangMPConstants.CURRENT_TIME_TYPE:
-                    mSeekBar.setProgress(time);
-                    mTextViewCurrentTime.setText(simpleDateFormat.format(date));
                     break;
                 default:
                     break;
@@ -170,13 +193,45 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
         }
     }
 
+    private String formatDate(int time) {
+        Date date = new Date(time);
+        @SuppressLint("SimpleDateFormat")
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
+        return simpleDateFormat.format(date);
+    }
+
     private void setPlayState() {
-        if (mIsPause) {
-            player.pause();
-            mIbtnPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_circle_outline_white_48dp, null));
-        } else {
-            player.start();
-            mIbtnPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_48dp, null));
+        if (player != null) {
+            if (mIsPause) {
+                player.pause();
+                mIbtnPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_circle_outline_white_48dp, null));
+            } else {
+                player.start();
+                mIbtnPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_48dp, null));
+            }
+        }
+    }
+
+    /**
+     * 切换界面时，需要保持原有界面的播放状态。
+     */
+    private void onChangeActivityInit() {
+        if (player != null) {
+            if (mIsPause) {
+                mIbtnPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_circle_outline_white_48dp, null));
+            } else {
+                mIbtnPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_48dp, null));
+            }
+            int time = Player.mediaPlayer.getDuration();
+            Intent i = new Intent(QiangMPConstants.ACTION_SONG_DURATION);
+            i.putExtra("time", time);
+            i.putExtra("serial_num", QiangMPConstants.NUM_SONG_DURATION);
+            Objects.requireNonNull(getActivity()).sendBroadcast(i);
+            time = Player.mediaPlayer.getCurrentPosition();
+            i = new Intent(QiangMPConstants.ACTION_SONG_CURRENT_POSITION);
+            i.putExtra("time", time);
+            i.putExtra("serial_num", QiangMPConstants.NUM_SONG_CURRENT_POSITION);
+            getActivity().sendBroadcast(i);
         }
     }
 }

@@ -6,9 +6,33 @@ package com.qiang.qiangmp.util;
  */
 public interface QiangMPConstants {
 
-    /** 将发送歌曲总时长的广播 */
-    int DURATION_TYPE = 1;
+    /**
+     * 歌曲总时长
+     */
+    String ACTION_SONG_DURATION = "com.qiang.qiangmp.song_duration";
 
-    /** 将发送歌曲当前时长的广播 */
-    int CURRENT_TIME_TYPE = 2;
+    /**
+     * 相应的ACTION编号
+     */
+    int NUM_SONG_DURATION = 1;
+
+    /**
+     * 歌曲当前时长
+     */
+    String ACTION_SONG_CURRENT_POSITION = "com.qiang.qiangmp.song_current_position";
+
+    /**
+     * 相应的ACTION编号
+     */
+    int NUM_SONG_CURRENT_POSITION = 2;
+
+    /**
+     * 控制歌曲播放
+     */
+    String ACTION_SONG_PLAY = "com.qiang.qiangmp.song_play";
+
+    /**
+     * 相应的ACTION编号
+     */
+    int NUM_SONG_PLAY = 3;
 }

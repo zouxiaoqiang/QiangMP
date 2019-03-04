@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
 import com.qiang.qiangmp.R;
+import com.qiang.qiangmp.fragment.PlayingControlBarFragment;
 
 /**
  * @author xiaoq

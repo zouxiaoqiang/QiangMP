@@ -3,8 +3,8 @@ package com.qiang.qiangmp.service;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.util.Log;
 
+import com.qiang.qiangmp.util.MyLog;
 import com.qiang.qiangmp.util.Player;
 import com.qiang.qiangmp.util.QiangMPConstants;
 
@@ -30,11 +30,13 @@ public class MusicPlayService extends Service {
         }
         player.playUrl(url);
         Player.mediaPlayer.setOnPreparedListener(mp -> {
-            player.start();
+            Intent i = new Intent(QiangMPConstants.ACTION_SONG_DURATION);
             int time = Player.mediaPlayer.getDuration();
-            Intent i = new Intent("com.qiang.qiangmp.musictime");
             i.putExtra("time", time);
-            i.putExtra("type", QiangMPConstants.DURATION_TYPE);
+            i.putExtra("serial_num", QiangMPConstants.NUM_SONG_DURATION);
+            sendBroadcast(i);
+            i = new Intent(QiangMPConstants.ACTION_SONG_PLAY);
+            i.putExtra("serial_num", QiangMPConstants.NUM_SONG_PLAY);
             sendBroadcast(i);
             new MusicTimeThread().start();
         });
@@ -52,9 +54,9 @@ public class MusicPlayService extends Service {
             while (player != null) {
                 if (Player.mediaPlayer.isPlaying()) {
                     int time = Player.mediaPlayer.getCurrentPosition();
-                    Intent intent = new Intent("com.qiang.qiangmp.musictime");
+                    Intent intent = new Intent(QiangMPConstants.ACTION_SONG_CURRENT_POSITION);
                     intent.putExtra("time", time);
-                    intent.putExtra("type", QiangMPConstants.CURRENT_TIME_TYPE);
+                    intent.putExtra("serial_num", QiangMPConstants.NUM_SONG_CURRENT_POSITION);
                     sendBroadcast(intent);
                 }
                 try {
@@ -68,7 +70,7 @@ public class MusicPlayService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "onDestroy");
+        MyLog.d("MusicPlaService", "onDestroy");
         player.stop();
         player = null;
         super.onDestroy();
