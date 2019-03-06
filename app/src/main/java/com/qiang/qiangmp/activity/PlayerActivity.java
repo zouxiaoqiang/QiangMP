@@ -9,7 +9,7 @@ import com.qiang.qiangmp.R;
  * @author xiaoq
  * @date 19-1-26
  */
-public class PlayerActivity extends AppCompatActivity {
+public class PlayerActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

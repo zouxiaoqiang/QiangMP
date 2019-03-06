@@ -1,9 +1,15 @@
 package com.qiang.qiangmp.service;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.IBinder;
 
+import com.qiang.qiangmp.activity.MainActivity;
+import com.qiang.qiangmp.bean.Song;
+import com.qiang.qiangmp.fragment.PlayingControlBarFragment;
 import com.qiang.qiangmp.util.MyLog;
 import com.qiang.qiangmp.util.Player;
 import com.qiang.qiangmp.util.QiangMPConstants;
@@ -20,8 +26,22 @@ public class MusicPlayService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         startNewMusic(intent);
+        storePlayedSong();
         return super.onStartCommand(intent, flags, startId);
     }
+
+    private void storePlayedSong() {
+        String sql;
+        if (MainActivity.playedSongCount == QiangMPConstants.MAX_SONG_PLAY_COUNT) {
+            sql = "delete from Song where id = ?";
+        }
+        Song song = PlayingControlBarFragment.globalSongList.get(PlayingControlBarFragment.globalSongPos);
+        sql = "insert into Song (name, singer, url) values(?, ?, ?)";
+        SQLiteDatabase db = MainActivity.dbHelper.getWritableDatabase();
+        db.execSQL(sql, new String[] {song.getName(), song.getSinger(), song.getUrl()});
+        MainActivity.playedSongCount++;
+    }
+
 
     private void startNewMusic(Intent intent) {
         String url = intent.getStringExtra("song_url");

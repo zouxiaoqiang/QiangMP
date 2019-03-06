@@ -157,7 +157,6 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
         String url = song.getUrl();
         Intent i = new Intent(getActivity(), MusicPlayService.class);
         i.putExtra("song_url", url);
-        i.putExtra("position", globalSongPos);
         Objects.requireNonNull(getActivity()).startService(i);
     }
 

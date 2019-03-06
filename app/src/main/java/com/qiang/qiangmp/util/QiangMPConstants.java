@@ -35,4 +35,9 @@ public interface QiangMPConstants {
      * 相应的ACTION编号
      */
     int NUM_SONG_PLAY = 3;
+
+    /**
+     * 最近播放歌曲的最大数量
+     */
+    int MAX_SONG_PLAY_COUNT = 100;
 }

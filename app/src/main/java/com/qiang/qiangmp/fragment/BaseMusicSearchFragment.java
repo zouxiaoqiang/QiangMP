@@ -43,6 +43,7 @@ public abstract class BaseMusicSearchFragment extends Fragment {
         listView.setOnItemClickListener((parent, view1, position, id) -> {
             PlayingControlBarFragment.globalSongList.clear();
             PlayingControlBarFragment.globalSongList.addAll(songList);
+            PlayingControlBarFragment.globalSongPos = position;
             Song song = songList.get(position);
             String url = song.getUrl();
             Intent i = new Intent(getActivity(), MusicPlayService.class);
