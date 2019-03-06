@@ -26,11 +26,6 @@ public class MainActivity extends BaseActivity {
 
     private DrawerLayout mDrawerLayout;
 
-    {
-        DbUtil.dbHelper = new MyDatabaseHelper(MainActivity.this, "QiangMP.db", null, 1);
-        DbUtil.playedSongCount = playedSongCount();
-    }
-
     private int playedSongCount() {
         String sqlQuery = "select count(*) from Song";
         SQLiteDatabase db = DbUtil.dbHelper.getReadableDatabase();
@@ -47,6 +42,9 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        DbUtil.dbHelper = new MyDatabaseHelper(this);
+        DbUtil.dbHelper.getWritableDatabase();
+        DbUtil.playedSongCount = playedSongCount();
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.main_toolbar_menu);
         toolbar.setOnMenuItemClickListener(menuItem -> {
@@ -65,13 +63,7 @@ public class MainActivity extends BaseActivity {
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         NavigationView navigationView = findViewById(R.id.left_nav_view);
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-
-                return false;
-            }
-        });
+        navigationView.setNavigationItemSelectedListener(menuItem -> false);
     }
 
     @Override

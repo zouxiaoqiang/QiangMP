@@ -167,7 +167,6 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            MyLog.d("onReceive", intent.getAction());
             int serialNum = intent.getIntExtra("serial_num", 0);
             int time;
             switch (serialNum) {
