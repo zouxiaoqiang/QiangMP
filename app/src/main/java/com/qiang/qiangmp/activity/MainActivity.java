@@ -16,10 +16,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.qiang.qiangmp.QiangMpApplication;
 import com.qiang.qiangmp.R;
 import com.qiang.qiangmp.adapter.RecentSongAdapter;
+import com.qiang.qiangmp.bean.Song;
 import com.qiang.qiangmp.util.DbUtil;
 import com.qiang.qiangmp.util.MyDatabaseHelper;
+import com.qiang.qiangmp.util.MyLog;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,7 +40,7 @@ public class MainActivity extends BaseActivity {
     /**
      * recent played song's name and singer
      */
-    private List<String[]> mRecentSongs = new ArrayList<>();
+    private List<Song> mRecentSongs = new ArrayList<>();
 
     private RecentSongAdapter mRecentSongAdapter;
 
@@ -84,13 +87,15 @@ public class MainActivity extends BaseActivity {
         toggle.syncState();
         mDrawerLayout.addDrawerListener(toggle);
         NavigationView navigationView = findViewById(R.id.left_nav_view);
-        navigationView.setNavigationItemSelectedListener(menuItem -> false);
         View headerView = navigationView.inflateHeaderView(R.layout.main_left_nav_view_header);
         mRecentSongAdapter = new RecentSongAdapter(this, mRecentSongs);
         RecyclerView recyclerView = headerView.findViewById(R.id.navigation_recycle_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(mRecentSongAdapter);
-
+        MyLog.d("MainActivity", "mIsPause: " + QiangMpApplication.mIsPause);
+        MyLog.d("MainActivity", "pos: " + QiangMpApplication.globalSongPos);
+        MyLog.d("MainActivity", "list: " + QiangMpApplication.globalSongList.size());
+        MyLog.d("MainActivity", "player : " + QiangMpApplication.player.getName());
     }
 
     /**
@@ -101,10 +106,11 @@ public class MainActivity extends BaseActivity {
         Cursor cursor = DbUtil.queryOnSong();
         if (cursor.moveToLast()) {
             do {
-                String name = cursor.getString(0);
-                String singer = cursor.getString(1);
-                String url = cursor.getString(2);
-                mRecentSongs.add(new String[] {name, singer, url});
+                Song song = new Song();
+                song.setName(cursor.getString(0));
+                song.setSinger(cursor.getString(1));
+                song.setUrl(cursor.getString(2));
+                mRecentSongs.add(song);
             } while (cursor.moveToPrevious());
         }
         mRecentSongAdapter.notifyDataSetChanged();

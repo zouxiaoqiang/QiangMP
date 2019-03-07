@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
+import com.qiang.qiangmp.QiangMpApplication;
 import com.qiang.qiangmp.bean.Song;
 import com.qiang.qiangmp.fragment.PlayingControlBarFragment;
 import com.qiang.qiangmp.util.DbUtil;
@@ -17,7 +18,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static com.qiang.qiangmp.activity.SearchActivity.player;
 
 /**
  * @author xiaoq
@@ -49,7 +49,7 @@ public class MusicPlayService extends Service {
      * 将最近播放歌曲写入数据库
      */
     private void storePlayedSong() {
-        Song song = PlayingControlBarFragment.globalSongList.get(PlayingControlBarFragment.globalSongPos);
+        Song song = QiangMpApplication.globalSongList.get(QiangMpApplication.globalSongPos);
         String name = song.getName();
         String singer = song.getSinger();
         String url = song.getUrl();
@@ -64,17 +64,23 @@ public class MusicPlayService extends Service {
 
 
     private void startNewMusic(Intent intent) {
-        String url = intent.getStringExtra("song_url");
-        if (player == null) {
-            player = new Player();
-        }
-        player.playUrl(url);
-        Player.getMediaPlayer().setOnPreparedListener(mp -> {
+        String url = intent.getStringExtra("url");
+        String name = intent.getStringExtra("name");
+        String singer = intent.getStringExtra("singer");
+        QiangMpApplication.player.setName(singer);
+        QiangMpApplication.player.setSinger(singer);
+        QiangMpApplication.player.playUrl(url);
+        Player.mediaPlayer.setOnPreparedListener(mp -> {
             Intent i = new Intent(QiangMPConstants.ACTION_SONG_DURATION);
-            int time = player.getDuration();
+            int time = Player.mediaPlayer.getDuration();
             i.putExtra("time", time);
             i.putExtra("serial_num", QiangMPConstants.NUM_SONG_DURATION);
             sendBroadcast(i);
+//            i = new Intent(QiangMPConstants.ACTION_SONG_AND_SINGER);
+//            i.putExtra("name", name);
+//            i.putExtra("singer", singer);
+//            i.putExtra("serial_num", QiangMPConstants.ACTION_SONG_AND_SINGER);
+//            sendBroadcast(i);
             i = new Intent(QiangMPConstants.ACTION_SONG_PLAY);
             i.putExtra("serial_num", QiangMPConstants.NUM_SONG_PLAY);
             sendBroadcast(i);
@@ -92,9 +98,9 @@ public class MusicPlayService extends Service {
         @Override
         public void run() {
             int lastPosition = 0;
-            while (player != null) {
-                if (player.isPlaying()) {
-                    int time = player.getCurrentPosition();
+            while (true) {
+                if (Player.mediaPlayer.isPlaying()) {
+                    int time = Player.mediaPlayer.getCurrentPosition();
                     if (time < lastPosition) {
                         break;
                     } else {
@@ -112,12 +118,5 @@ public class MusicPlayService extends Service {
                 }
             }
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        player.stop();
-        player = null;
-        super.onDestroy();
     }
 }

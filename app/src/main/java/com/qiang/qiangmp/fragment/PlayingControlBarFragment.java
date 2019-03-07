@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +17,12 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.qiang.qiangmp.QiangMpApplication;
 import com.qiang.qiangmp.R;
 import com.qiang.qiangmp.bean.Song;
 import com.qiang.qiangmp.service.MusicPlayService;
+import com.qiang.qiangmp.util.MyLog;
+import com.qiang.qiangmp.util.Player;
 import com.qiang.qiangmp.util.QiangMPConstants;
 
 import java.text.SimpleDateFormat;
@@ -27,7 +31,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import static com.qiang.qiangmp.activity.SearchActivity.player;
 
 /**
  * @author xiaoq
@@ -36,30 +39,15 @@ import static com.qiang.qiangmp.activity.SearchActivity.player;
 public class PlayingControlBarFragment extends Fragment implements View.OnClickListener {
 
 
-    /**
-     * 记录暂停状态
-     */
-    private static boolean mIsPause;
-    /**
-     * 当前歌曲位置
-     */
-    public static int globalSongPos;
-    /**
-     * 当前缓存歌曲列表， 默认为空
-     */
-    public static List<Song> globalSongList;
-
     private SeekBar mSeekBar;
     private TextView mTextViewCurrentTime, mTextViewDuration;
     private ImageButton mIbtnPlay;
     private MusicPlayBroadcastReceiver mMusicPlayBroadcastReceiver;
+    private TextView tvName, tvSinger;
 
     private static IntentFilter musicPlayerFilter = new IntentFilter();
 
     static {
-        mIsPause = true;
-        globalSongList = new ArrayList<>();
-        globalSongPos = -1;
         musicPlayerFilter.addAction(QiangMPConstants.ACTION_SONG_PLAY);
         musicPlayerFilter.addAction(QiangMPConstants.ACTION_SONG_CURRENT_POSITION);
         musicPlayerFilter.addAction(QiangMPConstants.ACTION_SONG_DURATION);
@@ -74,9 +62,9 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        initView(view);
-        onChangeActivityInit();
         super.onViewCreated(view, savedInstanceState);
+        MyLog.d("PlayingControlBarFragment", "onViewCreated");
+        initView(view);
     }
 
     private void initView(View view) {
@@ -84,6 +72,8 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
         mTextViewCurrentTime = view.findViewById(R.id.tv_current_time);
         mTextViewDuration = view.findViewById(R.id.tv_duration);
         mIbtnPlay = view.findViewById(R.id.ibtn_play);
+        tvName = view.findViewById(R.id.tv_name);
+        tvSinger = view.findViewById(R.id.tv_singer);
         ImageButton mIbtnPrevious = view.findViewById(R.id.ibtn_previous_music);
         ImageButton mIbtnNext = view.findViewById(R.id.ibtn_next_music);
         mIbtnPlay.setOnClickListener(this);
@@ -101,16 +91,19 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
         super.onStart();
         mMusicPlayBroadcastReceiver = new MusicPlayBroadcastReceiver();
         Objects.requireNonNull(getActivity()).registerReceiver(mMusicPlayBroadcastReceiver, musicPlayerFilter);
+        onChangeActivityInit();
     }
 
     @Override
     public void onStop() {
         super.onStop();
         Objects.requireNonNull(getActivity()).unregisterReceiver(mMusicPlayBroadcastReceiver);
+        MyLog.d("PlayingControlBarFragment", "onStop");
     }
 
     @Override
     public void onDestroy() {
+        MyLog.d("PlayingControlBarFragment", "onDestroy");
         super.onDestroy();
     }
 
@@ -118,28 +111,31 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ibtn_play:
-                if (player != null && !globalSongList.isEmpty()) {
-                    mIsPause = !mIsPause;
+                if (!QiangMpApplication.globalSongList.isEmpty()) {
+                    QiangMpApplication.mIsPause = !QiangMpApplication.mIsPause;
                     setPlayState();
                 }
                 break;
             case R.id.ibtn_next_music:
-                if (player != null && !globalSongList.isEmpty()) {
-                    if (!mIsPause) {
-                        mIsPause = true;
+                if (!QiangMpApplication.globalSongList.isEmpty()) {
+                    if (!QiangMpApplication.mIsPause) {
+                        QiangMpApplication.mIsPause = true;
                         setPlayState();
                     }
-                    globalSongPos = (globalSongPos + 1) % globalSongList.size();
+                    QiangMpApplication.globalSongPos =
+                            (QiangMpApplication.globalSongPos + 1) % QiangMpApplication.globalSongList.size();
                     startMusicPlayerService();
                 }
                 break;
             case R.id.ibtn_previous_music:
-                if (player != null && !globalSongList.isEmpty()) {
-                    if (!mIsPause) {
-                        mIsPause = true;
+                if (!QiangMpApplication.globalSongList.isEmpty()) {
+                    if (!QiangMpApplication.mIsPause) {
+                        QiangMpApplication.mIsPause = true;
                         setPlayState();
                     }
-                    globalSongPos = (globalSongPos + globalSongList.size() - 1) % globalSongList.size();
+                    QiangMpApplication.globalSongPos =
+                            (QiangMpApplication.globalSongPos + QiangMpApplication.globalSongList.size() - 1)
+                                    % QiangMpApplication.globalSongList.size();
                     startMusicPlayerService();
                 }
                 break;
@@ -151,7 +147,7 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
      * 播放前/后一首歌曲，开启MusicPlayerService
      */
     private void startMusicPlayerService() {
-        Song song = globalSongList.get(globalSongPos);
+        Song song = QiangMpApplication.globalSongList.get(QiangMpApplication.globalSongPos);
         String url = song.getUrl();
         Intent i = new Intent(getActivity(), MusicPlayService.class);
         i.putExtra("song_url", url);
@@ -168,7 +164,15 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
             int serialNum = intent.getIntExtra("serial_num", 0);
             int time;
             switch (serialNum) {
+                case QiangMPConstants.NUM_SONG_ADN_SINGER:
+                    String name = intent.getStringExtra("name");
+                    String singer = intent.getStringExtra("singer");
+                    tvName.setText(name);
+                    tvSinger.setText(singer);
+                    break;
                 case QiangMPConstants.NUM_SONG_DURATION:
+                    tvName.setText(QiangMpApplication.player.getName());
+                    tvSinger.setText(QiangMpApplication.player.getSinger());
                     // 毫秒
                     time = intent.getIntExtra("time", 0);
                     mSeekBar.setMax(time);
@@ -180,7 +184,7 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
                     mTextViewCurrentTime.setText(formatDate(time));
                     break;
                 case QiangMPConstants.NUM_SONG_PLAY:
-                    mIsPause = false;
+                    QiangMpApplication.mIsPause = false;
                     setPlayState();
                     break;
                 default:
@@ -197,14 +201,12 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
     }
 
     public void setPlayState() {
-        if (player != null) {
-            if (mIsPause) {
-                player.pause();
-                mIbtnPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_circle_outline_white_48dp, null));
-            } else {
-                player.start();
-                mIbtnPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_48dp, null));
-            }
+        if (QiangMpApplication.mIsPause) {
+            QiangMpApplication.player.pause();
+            mIbtnPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_circle_outline_white_48dp, null));
+        } else {
+            QiangMpApplication.player.start();
+            mIbtnPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_48dp, null));
         }
     }
 
@@ -212,18 +214,20 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
      * 切换界面时，需要保持原有界面的播放状态。
      */
     private void onChangeActivityInit() {
-        if (player != null) {
-            if (mIsPause) {
+        if (QiangMpApplication.globalSongList != null && !QiangMpApplication.globalSongList.isEmpty()) {
+            if (QiangMpApplication.mIsPause) {
                 mIbtnPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_circle_outline_white_48dp, null));
             } else {
                 mIbtnPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_48dp, null));
             }
-            int time = player.getDuration();
+            int time = Player.mediaPlayer.getDuration();
+            MyLog.d("onChangeActivtiyInit", "duration: " + time);
             Intent i = new Intent(QiangMPConstants.ACTION_SONG_DURATION);
             i.putExtra("time", time);
             i.putExtra("serial_num", QiangMPConstants.NUM_SONG_DURATION);
             Objects.requireNonNull(getActivity()).sendBroadcast(i);
-            time = player.getCurrentPosition();
+            time = Player.mediaPlayer.getCurrentPosition();
+            MyLog.d("onChangeActivtiyInit", "current: " + time);
             i = new Intent(QiangMPConstants.ACTION_SONG_CURRENT_POSITION);
             i.putExtra("time", time);
             i.putExtra("serial_num", QiangMPConstants.NUM_SONG_CURRENT_POSITION);

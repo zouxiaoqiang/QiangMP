@@ -34,13 +34,10 @@ import java.util.List;
  */
 public class SearchActivity extends BaseActivity implements View.OnClickListener {
     private static final String TAG = "SearchActivity";
-
-    public static Player player;
-
     /**
      * 搜索关键词
      */
-    private String s;
+    private String s = null;
     private MusicSearchFragmentPagerAdapter mFragmentPagerAdapter;
 
     @Override
@@ -64,7 +61,9 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
 
             @Override
             public void onPageSelected(int i) {
-                mFragmentPagerAdapter.getCurrentFragment().searchMusic(s);
+                if (s != null && s.length() != 0) {
+                    mFragmentPagerAdapter.getCurrentFragment().searchMusic(s);
+                }
             }
 
             @Override

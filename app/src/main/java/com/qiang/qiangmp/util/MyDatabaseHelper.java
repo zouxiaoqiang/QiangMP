@@ -13,7 +13,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
     private Context mContext;
 
-    private static final int VERSION = 6;
+    private static final int VERSION = 2;
 
     private static final String DATABASE = "QiangMP.db";
 

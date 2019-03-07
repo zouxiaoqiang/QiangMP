@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.qiang.qiangmp.QiangMpApplication;
 import com.qiang.qiangmp.R;
 import com.qiang.qiangmp.activity.SearchActivity;
 import com.qiang.qiangmp.adapter.SongAdapter;
@@ -26,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.qiang.qiangmp.activity.SearchActivity.player;
 
 /**
  * @author xiaoq
@@ -44,13 +44,17 @@ public abstract class BaseMusicSearchFragment extends Fragment {
         songAdapter = new SongAdapter(getActivity(), songList);
         listView.setAdapter(songAdapter);
         listView.setOnItemClickListener((parent, view1, position, id) -> {
-            PlayingControlBarFragment.globalSongList.clear();
-            PlayingControlBarFragment.globalSongList.addAll(songList);
-            PlayingControlBarFragment.globalSongPos = position;
-            Song song = songList.get(position);
+            QiangMpApplication.globalSongList.clear();
+            QiangMpApplication.globalSongList.addAll(songList);
+            QiangMpApplication.globalSongPos = position;
+            Song song = QiangMpApplication.globalSongList.get(QiangMpApplication.globalSongPos);
             String url = song.getUrl();
+            String name = song.getName();
+            String singer = song.getSinger();
             Intent i = new Intent(getActivity(), MusicPlayService.class);
-            i.putExtra("song_url", url);
+            i.putExtra("url", url);
+            i.putExtra("name", name);
+            i.putExtra("singer", singer);
             Objects.requireNonNull(getActivity()).startService(i);
         });
         super.onViewCreated(view, savedInstanceState);
