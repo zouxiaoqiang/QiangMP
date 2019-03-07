@@ -44,22 +44,31 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="10dp"
-        android:background="#ffff00"
-        app:tabIndicatorColor="#66ff33"
-        app:tabIndicatorHeight="20dp"
+        android:background="#787878"
+        app:tabIndicatorColor="#D1CECE"
         app:tabMode="fixed"
-        app:tabSelectedTextColor="#CC33FF"
-        app:tabTextColor="@color/colorPrimary" />
+        app:tabSelectedTextColor="#0D1F2F"
+        app:tabTextColor="#D1CECE" />
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/viewpager"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="500dp"
-        android:layout_marginBottom="10dp" />
+        android:layout_height="match_parent">
 
-    <include
-        layout="@layout/activity_base"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewpager"
+            android:layout_above="@id/activity_base"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp" />
+
+        <include
+            android:id="@+id/activity_base"
+            layout="@layout/activity_base"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_height="100dp" />
+
+    </RelativeLayout>
+
 
 </LinearLayout>

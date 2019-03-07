@@ -1,19 +1,12 @@
 package com.qiang.qiangmp.service;
 
-import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.IBinder;
 
-import com.qiang.qiangmp.activity.MainActivity;
 import com.qiang.qiangmp.bean.Song;
 import com.qiang.qiangmp.fragment.PlayingControlBarFragment;
 import com.qiang.qiangmp.util.DbUtil;
-import com.qiang.qiangmp.util.MyLog;
 import com.qiang.qiangmp.util.Player;
 import com.qiang.qiangmp.util.QiangMPConstants;
 import com.qiang.qiangmp.util.ThreadFactoryBuilder;
@@ -67,20 +60,6 @@ public class MusicPlayService extends Service {
             DbUtil.insertOnSong(name, singer, url);
             DbUtil.playedSongCount++;
         }
-//        sql = "select * from Song";
-//        @SuppressLint("Recycle")
-//        Cursor cursor = db.rawQuery(sql, null);
-//        if (cursor.moveToFirst()) {
-//            do {
-//                String name = cursor.getString(cursor.getColumnIndex("name"));
-//                String singer = cursor.getString(cursor.getColumnIndex("singer"));
-//                String url = cursor.getString(cursor.getColumnIndex("url"));
-//                MyLog.d("", name);
-//                MyLog.d("", singer);
-//                MyLog.d("", url);
-//                MyLog.d("", "##############");
-//            } while (cursor.moveToNext());
-//        }
     }
 
 
@@ -90,9 +69,9 @@ public class MusicPlayService extends Service {
             player = new Player();
         }
         player.playUrl(url);
-        Player.mediaPlayer.setOnPreparedListener(mp -> {
+        Player.getMediaPlayer().setOnPreparedListener(mp -> {
             Intent i = new Intent(QiangMPConstants.ACTION_SONG_DURATION);
-            int time = Player.mediaPlayer.getDuration();
+            int time = player.getDuration();
             i.putExtra("time", time);
             i.putExtra("serial_num", QiangMPConstants.NUM_SONG_DURATION);
             sendBroadcast(i);
@@ -112,9 +91,15 @@ public class MusicPlayService extends Service {
     class MusicTimeThread extends Thread {
         @Override
         public void run() {
+            int lastPosition = 0;
             while (player != null) {
-                if (Player.mediaPlayer.isPlaying()) {
-                    int time = Player.mediaPlayer.getCurrentPosition();
+                if (player.isPlaying()) {
+                    int time = player.getCurrentPosition();
+                    if (time < lastPosition) {
+                        break;
+                    } else {
+                        lastPosition = time;
+                    }
                     Intent intent = new Intent(QiangMPConstants.ACTION_SONG_CURRENT_POSITION);
                     intent.putExtra("time", time);
                     intent.putExtra("serial_num", QiangMPConstants.NUM_SONG_CURRENT_POSITION);
@@ -131,7 +116,6 @@ public class MusicPlayService extends Service {
 
     @Override
     public void onDestroy() {
-        MyLog.d("MusicPlaService", "onDestroy");
         player.stop();
         player = null;
         super.onDestroy();

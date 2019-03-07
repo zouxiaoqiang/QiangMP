@@ -13,6 +13,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.qiang.qiangmp.R;
+import com.qiang.qiangmp.activity.SearchActivity;
 import com.qiang.qiangmp.adapter.SongAdapter;
 import com.qiang.qiangmp.bean.Song;
 import com.qiang.qiangmp.service.MusicPlayService;
@@ -24,6 +25,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static com.qiang.qiangmp.activity.SearchActivity.player;
 
 /**
  * @author xiaoq

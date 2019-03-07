@@ -3,12 +3,20 @@ package com.qiang.qiangmp.util;
 import android.content.Intent;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
+import android.provider.MediaStore;
+
+import com.qiang.qiangmp.fragment.PlayingControlBarFragment;
 
 import java.io.IOException;
 
 
+/**
+ * @author xiaoqiang
+ */
 public class Player {
-    public static MediaPlayer mediaPlayer;
+
+    private static MediaPlayer mediaPlayer;
+
 
     public Player() {
         mediaPlayer = new MediaPlayer();
@@ -30,6 +38,22 @@ public class Player {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static MediaPlayer getMediaPlayer() {
+        return mediaPlayer;
+    }
+
+    public boolean isPlaying() {
+        return mediaPlayer.isPlaying();
+    }
+
+    public int getCurrentPosition() {
+        return mediaPlayer.getCurrentPosition();
+    }
+
+    public int getDuration() {
+        return mediaPlayer.getDuration();
     }
 
     public void pause() {

@@ -19,8 +19,6 @@ import android.widget.TextView;
 import com.qiang.qiangmp.R;
 import com.qiang.qiangmp.bean.Song;
 import com.qiang.qiangmp.service.MusicPlayService;
-import com.qiang.qiangmp.util.MyLog;
-import com.qiang.qiangmp.util.Player;
 import com.qiang.qiangmp.util.QiangMPConstants;
 
 import java.text.SimpleDateFormat;
@@ -182,7 +180,7 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
                     mTextViewCurrentTime.setText(formatDate(time));
                     break;
                 case QiangMPConstants.NUM_SONG_PLAY:
-                    mIsPause = !mIsPause;
+                    mIsPause = false;
                     setPlayState();
                     break;
                 default:
@@ -198,7 +196,7 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
         return simpleDateFormat.format(date);
     }
 
-    private void setPlayState() {
+    public void setPlayState() {
         if (player != null) {
             if (mIsPause) {
                 player.pause();
@@ -220,12 +218,12 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
             } else {
                 mIbtnPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_48dp, null));
             }
-            int time = Player.mediaPlayer.getDuration();
+            int time = player.getDuration();
             Intent i = new Intent(QiangMPConstants.ACTION_SONG_DURATION);
             i.putExtra("time", time);
             i.putExtra("serial_num", QiangMPConstants.NUM_SONG_DURATION);
             Objects.requireNonNull(getActivity()).sendBroadcast(i);
-            time = Player.mediaPlayer.getCurrentPosition();
+            time = player.getCurrentPosition();
             i = new Intent(QiangMPConstants.ACTION_SONG_CURRENT_POSITION);
             i.putExtra("time", time);
             i.putExtra("serial_num", QiangMPConstants.NUM_SONG_CURRENT_POSITION);
