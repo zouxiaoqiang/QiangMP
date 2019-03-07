@@ -56,33 +56,31 @@ public class MusicPlayService extends Service {
      * 将最近播放歌曲写入数据库
      */
     private void storePlayedSong() {
-        String sql;
-        SQLiteDatabase db = DbUtil.dbHelper.getWritableDatabase();
         Song song = PlayingControlBarFragment.globalSongList.get(PlayingControlBarFragment.globalSongPos);
+        String name = song.getName();
+        String singer = song.getSinger();
+        String url = song.getUrl();
         if (DbUtil.playedSongCount == QiangMPConstants.MAX_SONG_PLAY_COUNT) {
-            sql = "delete from Song where id = 1";
-            db.execSQL(sql);
-            sql = "insert into Song (id, name, singer, url) values(?, ?, ?, ?)";
-            db.execSQL(sql, new String[] {String.valueOf(QiangMPConstants.MAX_SONG_PLAY_COUNT), song.getName(), song.getSinger(), song.getUrl()});
+            DbUtil.deleteOnSong(1);
+            DbUtil.insertOnSong(QiangMPConstants.MAX_SONG_PLAY_COUNT, name, singer, url);
         } else {
-            sql = "insert into Song (name, singer, url) values(?, ?, ?)";
-            db.execSQL(sql, new String[] {song.getName(), song.getSinger(), song.getUrl()});
+            DbUtil.insertOnSong(name, singer, url);
             DbUtil.playedSongCount++;
         }
-        sql = "select * from Song";
-        @SuppressLint("Recycle")
-        Cursor cursor = db.rawQuery(sql, null);
-        if (cursor.moveToFirst()) {
-            do {
-                String name = cursor.getString(cursor.getColumnIndex("name"));
-                String singer = cursor.getString(cursor.getColumnIndex("singer"));
-                String url = cursor.getString(cursor.getColumnIndex("url"));
-                MyLog.d("", name);
-                MyLog.d("", singer);
-                MyLog.d("", url);
-                MyLog.d("", "##############");
-            } while (cursor.moveToNext());
-        }
+//        sql = "select * from Song";
+//        @SuppressLint("Recycle")
+//        Cursor cursor = db.rawQuery(sql, null);
+//        if (cursor.moveToFirst()) {
+//            do {
+//                String name = cursor.getString(cursor.getColumnIndex("name"));
+//                String singer = cursor.getString(cursor.getColumnIndex("singer"));
+//                String url = cursor.getString(cursor.getColumnIndex("url"));
+//                MyLog.d("", name);
+//                MyLog.d("", singer);
+//                MyLog.d("", url);
+//                MyLog.d("", "##############");
+//            } while (cursor.moveToNext());
+//        }
     }
 
 
