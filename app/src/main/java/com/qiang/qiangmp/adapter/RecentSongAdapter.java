@@ -1,8 +1,6 @@
 package com.qiang.qiangmp.adapter;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -11,14 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.qiang.qiangmp.QiangMpApplication;
 import com.qiang.qiangmp.R;
 import com.qiang.qiangmp.bean.Song;
-import com.qiang.qiangmp.fragment.PlayingControlBarFragment;
 import com.qiang.qiangmp.service.MusicPlayService;
 
 import java.util.List;
-import java.util.Objects;
+
+import static com.qiang.qiangmp.QiangMpApplication.globalSongList;
+import static com.qiang.qiangmp.QiangMpApplication.globalSongPos;
+import static com.qiang.qiangmp.QiangMpApplication.player;
 
 /**
  * @author xiaoqiang
@@ -27,20 +26,10 @@ import java.util.Objects;
 public class RecentSongAdapter extends RecyclerView.Adapter<RecentSongAdapter.MyViewHolder> {
     private Context context;
     private List<Song> data;
-    private AlertDialog deleteSongDialog;
 
     public RecentSongAdapter(Context context, List<Song> data) {
         this.context = context;
         this.data = data;
-        deleteSongDialog = new AlertDialog.Builder(context)
-                .setIcon(R.drawable.ic_delete_indigo_200_24dp)
-                .setPositiveButton("删除", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                })
-                .create();
     }
 
     @NonNull
@@ -49,24 +38,16 @@ public class RecentSongAdapter extends RecyclerView.Adapter<RecentSongAdapter.My
         View view = LayoutInflater.from(context)
                 .inflate(R.layout.item_navigation_recycle_view, viewGroup, false);
         view.setOnClickListener(v -> {
-            QiangMpApplication.globalSongList.clear();
-            QiangMpApplication.globalSongList.addAll(data);
-            QiangMpApplication.globalSongPos = (int) v.getTag();
-            Song song = QiangMpApplication.globalSongList.get(QiangMpApplication.globalSongPos);
+            globalSongList.clear();
+            globalSongList.addAll(data);
+            globalSongPos = (int) v.getTag();
+            Song song = globalSongList.get(globalSongPos);
             String url = song.getUrl();
-            String name = song.getName();
-            String singer = song.getSinger();
+            player.setName(song.getName());
+            player.setSinger(song.getSinger());
             Intent intent = new Intent(context, MusicPlayService.class);
             intent.putExtra("url", url);
-            intent.putExtra("name", name);
-            intent.putExtra("singer", singer);
             context.startService(intent);
-        });
-        view.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                return false;
-            }
         });
         return new MyViewHolder(view);
     }

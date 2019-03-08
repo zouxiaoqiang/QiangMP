@@ -31,6 +31,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import static com.qiang.qiangmp.QiangMpApplication.globalSongList;
+import static com.qiang.qiangmp.QiangMpApplication.globalSongPos;
+import static com.qiang.qiangmp.QiangMpApplication.mIsPause;
+import static com.qiang.qiangmp.QiangMpApplication.player;
+
 
 /**
  * @author xiaoq
@@ -111,31 +116,28 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ibtn_play:
-                if (!QiangMpApplication.globalSongList.isEmpty()) {
-                    QiangMpApplication.mIsPause = !QiangMpApplication.mIsPause;
+                if (player.isPrepare()) {
+                    mIsPause = !mIsPause;
                     setPlayState();
                 }
                 break;
             case R.id.ibtn_next_music:
-                if (!QiangMpApplication.globalSongList.isEmpty()) {
-                    if (!QiangMpApplication.mIsPause) {
-                        QiangMpApplication.mIsPause = true;
+                if (!globalSongList.isEmpty()) {
+                    if (!mIsPause) {
+                        mIsPause = true;
                         setPlayState();
                     }
-                    QiangMpApplication.globalSongPos =
-                            (QiangMpApplication.globalSongPos + 1) % QiangMpApplication.globalSongList.size();
+                    globalSongPos = (globalSongPos + 1) % globalSongList.size();
                     startMusicPlayerService();
                 }
                 break;
             case R.id.ibtn_previous_music:
-                if (!QiangMpApplication.globalSongList.isEmpty()) {
-                    if (!QiangMpApplication.mIsPause) {
-                        QiangMpApplication.mIsPause = true;
+                if (!globalSongList.isEmpty()) {
+                    if (!mIsPause) {
+                        mIsPause = true;
                         setPlayState();
                     }
-                    QiangMpApplication.globalSongPos =
-                            (QiangMpApplication.globalSongPos + QiangMpApplication.globalSongList.size() - 1)
-                                    % QiangMpApplication.globalSongList.size();
+                    globalSongPos = (globalSongPos + globalSongList.size() - 1) % globalSongList.size();
                     startMusicPlayerService();
                 }
                 break;
@@ -147,10 +149,10 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
      * 播放前/后一首歌曲，开启MusicPlayerService
      */
     private void startMusicPlayerService() {
-        Song song = QiangMpApplication.globalSongList.get(QiangMpApplication.globalSongPos);
+        Song song = globalSongList.get(globalSongPos);
         String url = song.getUrl();
         Intent i = new Intent(getActivity(), MusicPlayService.class);
-        i.putExtra("song_url", url);
+        i.putExtra("url", url);
         Objects.requireNonNull(getActivity()).startService(i);
     }
 
@@ -164,15 +166,9 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
             int serialNum = intent.getIntExtra("serial_num", 0);
             int time;
             switch (serialNum) {
-                case QiangMPConstants.NUM_SONG_ADN_SINGER:
-                    String name = intent.getStringExtra("name");
-                    String singer = intent.getStringExtra("singer");
-                    tvName.setText(name);
-                    tvSinger.setText(singer);
-                    break;
                 case QiangMPConstants.NUM_SONG_DURATION:
-                    tvName.setText(QiangMpApplication.player.getName());
-                    tvSinger.setText(QiangMpApplication.player.getSinger());
+                    tvName.setText(player.getName());
+                    tvSinger.setText(player.getSinger());
                     // 毫秒
                     time = intent.getIntExtra("time", 0);
                     mSeekBar.setMax(time);
@@ -184,7 +180,6 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
                     mTextViewCurrentTime.setText(formatDate(time));
                     break;
                 case QiangMPConstants.NUM_SONG_PLAY:
-                    QiangMpApplication.mIsPause = false;
                     setPlayState();
                     break;
                 default:
@@ -201,11 +196,11 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
     }
 
     public void setPlayState() {
-        if (QiangMpApplication.mIsPause) {
-            QiangMpApplication.player.pause();
+        if (mIsPause) {
+            player.pause();
             mIbtnPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_circle_outline_white_48dp, null));
         } else {
-            QiangMpApplication.player.start();
+            player.start();
             mIbtnPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_48dp, null));
         }
     }
@@ -214,19 +209,19 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
      * 切换界面时，需要保持原有界面的播放状态。
      */
     private void onChangeActivityInit() {
-        if (QiangMpApplication.globalSongList != null && !QiangMpApplication.globalSongList.isEmpty()) {
-            if (QiangMpApplication.mIsPause) {
+        if (player.isPrepare()) {
+            if (mIsPause) {
                 mIbtnPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_circle_outline_white_48dp, null));
             } else {
                 mIbtnPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_48dp, null));
             }
-            int time = Player.mediaPlayer.getDuration();
+            int time = player.getDuration();
             MyLog.d("onChangeActivtiyInit", "duration: " + time);
             Intent i = new Intent(QiangMPConstants.ACTION_SONG_DURATION);
             i.putExtra("time", time);
             i.putExtra("serial_num", QiangMPConstants.NUM_SONG_DURATION);
             Objects.requireNonNull(getActivity()).sendBroadcast(i);
-            time = Player.mediaPlayer.getCurrentPosition();
+            time = player.getCurrentPosition();
             MyLog.d("onChangeActivtiyInit", "current: " + time);
             i = new Intent(QiangMPConstants.ACTION_SONG_CURRENT_POSITION);
             i.putExtra("time", time);

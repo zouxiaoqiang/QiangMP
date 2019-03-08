@@ -1,9 +1,7 @@
 package com.qiang.qiangmp.activity;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -15,18 +13,19 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 
 import com.qiang.qiangmp.QiangMpApplication;
 import com.qiang.qiangmp.R;
 import com.qiang.qiangmp.adapter.RecentSongAdapter;
 import com.qiang.qiangmp.bean.Song;
 import com.qiang.qiangmp.util.DbUtil;
-import com.qiang.qiangmp.util.MyDatabaseHelper;
 import com.qiang.qiangmp.util.MyLog;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
+import static com.qiang.qiangmp.QiangMpApplication.player;
 
 
 /**
@@ -36,7 +35,8 @@ import java.util.List;
 public class MainActivity extends BaseActivity {
 
     private DrawerLayout mDrawerLayout;
-
+    private Toolbar mToolbar;
+    private NavigationView mNavigationView;
     /**
      * recent played song's name and singer
      */
@@ -44,28 +44,28 @@ public class MainActivity extends BaseActivity {
 
     private RecentSongAdapter mRecentSongAdapter;
 
-    private int playedSongCount() {
-        String sqlQuery = "select count(*) from Song";
-        SQLiteDatabase db = DbUtil.dbHelper.getReadableDatabase();
-        @SuppressLint("Recycle")
-        Cursor cursor = db.rawQuery(sqlQuery, null);
-        int count = 0;
-        if (cursor.moveToFirst()) {
-            count = cursor.getInt(0);
-        }
-        return count;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        DbUtil.dbHelper = new MyDatabaseHelper(this);
-        DbUtil.dbHelper.getWritableDatabase();
-        DbUtil.playedSongCount = playedSongCount();
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.inflateMenu(R.menu.main_toolbar_menu);
-        toolbar.setOnMenuItemClickListener(menuItem -> {
+        initView();
+        configRecycleView();
+        listen();
+        MyLog.d("MainActivity", "mIsPause: " + QiangMpApplication.mIsPause);
+        MyLog.d("MainActivity", "pos: " + QiangMpApplication.globalSongPos);
+        MyLog.d("MainActivity", "list: " + QiangMpApplication.globalSongList.size());
+        MyLog.d("MainActivity", "player : " + player.getName());
+    }
+
+    private void initView() {
+        mToolbar = findViewById(R.id.toolbar);
+        mToolbar.inflateMenu(R.menu.main_toolbar_menu);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+        mNavigationView = findViewById(R.id.left_nav_view);
+    }
+
+    private void listen() {
+        mToolbar.setOnMenuItemClickListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 case R.id.action_search:
                     Intent intent = new Intent(MainActivity.this, SearchActivity.class);
@@ -75,8 +75,8 @@ public class MainActivity extends BaseActivity {
             }
             return true;
         });
-        mDrawerLayout = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar,
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar,
                 0, 0) {
             @Override
             public void onDrawerOpened(View drawerView) {
@@ -86,16 +86,38 @@ public class MainActivity extends BaseActivity {
         };
         toggle.syncState();
         mDrawerLayout.addDrawerListener(toggle);
-        NavigationView navigationView = findViewById(R.id.left_nav_view);
-        View headerView = navigationView.inflateHeaderView(R.layout.main_left_nav_view_header);
+
+        mNavigationView.setNavigationItemSelectedListener(menuItem -> {
+            switch (menuItem.getItemId()) {
+                case R.id.item_clear_all:
+                    new ClearAllOnSongThread().start();
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    player.setPlayedSongCount(0);
+                    updateRecentSong();
+                    break;
+                default:
+            }
+            return false;
+        });
+    }
+
+    private class ClearAllOnSongThread extends Thread {
+        @Override
+        public void run() {
+            DbUtil.clearAllOnSong();
+        }
+    }
+
+    private void configRecycleView() {
         mRecentSongAdapter = new RecentSongAdapter(this, mRecentSongs);
+        View headerView = mNavigationView.inflateHeaderView(R.layout.main_left_nav_view_header);
         RecyclerView recyclerView = headerView.findViewById(R.id.navigation_recycle_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(mRecentSongAdapter);
-        MyLog.d("MainActivity", "mIsPause: " + QiangMpApplication.mIsPause);
-        MyLog.d("MainActivity", "pos: " + QiangMpApplication.globalSongPos);
-        MyLog.d("MainActivity", "list: " + QiangMpApplication.globalSongList.size());
-        MyLog.d("MainActivity", "player : " + QiangMpApplication.player.getName());
     }
 
     /**

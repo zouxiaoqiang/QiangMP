@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.qiang.qiangmp.QiangMpApplication.player;
+
 
 /**
  * @author xiaoq
@@ -49,12 +51,10 @@ public abstract class BaseMusicSearchFragment extends Fragment {
             QiangMpApplication.globalSongPos = position;
             Song song = QiangMpApplication.globalSongList.get(QiangMpApplication.globalSongPos);
             String url = song.getUrl();
-            String name = song.getName();
-            String singer = song.getSinger();
+            player.setName(song.getName());
+            player.setSinger(song.getSinger());
             Intent i = new Intent(getActivity(), MusicPlayService.class);
             i.putExtra("url", url);
-            i.putExtra("name", name);
-            i.putExtra("singer", singer);
             Objects.requireNonNull(getActivity()).startService(i);
         });
         super.onViewCreated(view, savedInstanceState);

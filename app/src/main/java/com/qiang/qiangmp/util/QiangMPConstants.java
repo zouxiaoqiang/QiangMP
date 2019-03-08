@@ -7,16 +7,6 @@ package com.qiang.qiangmp.util;
 public interface QiangMPConstants {
 
     /**
-     * 歌名和歌手名
-     */
-    String ACTION_SONG_AND_SINGER = "com.qiang.qiangmp.song_and_singer";
-
-    /**
-     * 相应的ACTION编号
-     */
-    int NUM_SONG_ADN_SINGER = 0;
-
-    /**
      * 歌曲总时长
      */
     String ACTION_SONG_DURATION = "com.qiang.qiangmp.song_duration";
