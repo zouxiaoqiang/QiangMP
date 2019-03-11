@@ -40,4 +40,14 @@ public interface QiangMPConstants {
      * 最近播放歌曲的最大数量
      */
     int MAX_SONG_PLAY_COUNT = 100;
+
+    /**
+     * 获取QQ音乐热门歌单的url
+     */
+    String URL_QQ_SONG_LIST = "https://api.bzqll.com/music/tencent/hotSongList?key=579621905&categoryId=10000000&sortId=3&limit=14";
+
+    /**
+     * 获取网易云音乐热门歌单的url
+     */
+    String URL_NETEASE_SONG_LIST = "https://api.bzqll.com/music/netease/hotSongList?key=579621905&cat=%E5%85%A8%E9%83%A8&limit=15&offset=0";
 }

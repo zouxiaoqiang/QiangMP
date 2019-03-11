@@ -6,4 +6,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="default_time">00:00</string>
     <string name="clear">清空</string>
+    <string name="song_list_qq">QQ音乐推荐歌单</string>
+    <string name="song_list_netease">网易云音乐推荐歌单</string>
+    <string name="song_list_kugou">酷狗音乐推荐歌单</string>
 </resources>

@@ -19,21 +19,75 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hello World!"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fadingEdge="vertical"
+            android:scrollbars="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:gravity="center_vertical"
+                        android:text="@string/song_list_qq"
+                        android:textColor="#242424"
+                        android:textSize="24sp" />
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_song_list_qq"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:gravity="center_vertical"
+                        android:text="@string/song_list_netease"
+                        android:textColor="#242424"
+                        android:textSize="24sp" />
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_song_list_netease"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
 
         <include
             layout="@layout/activity_base"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="100dp" />
 
     </LinearLayout>
+
 
     <android.support.design.widget.NavigationView
         android:id="@+id/left_nav_view"
@@ -41,8 +95,8 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
+        app:headerLayout="@layout/main_left_nav_view_header"
         app:itemIconTint="#242424"
-        app:menu="@menu/main_left_nav_view_menu"
-        app:headerLayout="@layout/main_left_nav_view_header"/>
+        app:menu="@menu/main_left_nav_view_menu" />
 
 </android.support.v4.widget.DrawerLayout>

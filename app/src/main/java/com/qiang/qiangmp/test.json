@@ -3,38 +3,13 @@
   "code": 200,
   "data": [
     {
-      "id": "471403427",
-      "name": "我喜欢上你时的内心活动",
-      "singer": "陈绮贞",
-      "pic": "https://api.bzqll.com/music/netease/pic?id=471403427&imgSize=400&key=579621905",
-      "lrc": "https://api.bzqll.com/music/netease/lrc?id=471403427&key=579621905",
-      "url": "https://api.bzqll.com/music/netease/url?id=471403427&key=579621905",
-      "time": 225
-    },
-    {
-      "id": "550210712",
-      "name": "我喜欢上你时的内心活动（Cover：陈绮贞）",
-      "singer": "很美味",
-      "pic": "https://api.bzqll.com/music/netease/pic?id=550210712&imgSize=400&key=579621905",
-      "lrc": "https://api.bzqll.com/music/netease/lrc?id=550210712&key=579621905",
-      "url": "https://api.bzqll.com/music/netease/url?id=550210712&key=579621905",
-      "time": 204
-    }
-  ]
-}
-
-{
-  "result": "SUCCESS",
-  "code": 200,
-  "data": [
-    {
-      "id": "52e7dad617d2b7fbfcc2ba2ae6a35000",
-      "name": "123",
-      "singer": "郭欣桐",
-      "pic": "https://api.bzqll.com/music/kugou/pic?id=52e7dad617d2b7fbfcc2ba2ae6a35000&imgSize=400&key=579621905",
-      "lrc": "https://api.bzqll.com/music/kugou/lrc?id=52e7dad617d2b7fbfcc2ba2ae6a35000&key=579621905",
-      "url": "https://api.bzqll.com/music/kugou/url?id=52e7dad617d2b7fbfcc2ba2ae6a35000&key=579621905",
-      "time": 213
+      "id": 968030312,
+      "title": "夜晚足够孤独 星空才能够美",
+      "creator": "谝文",
+      "description": "看不见的就不要看见吧 \n得不到的就不要得到吧 \n孤独就一直孤独下去吧 \n没什么大不了 \n不过是夜太黑 \n老得连白日梦都做少了 \n没人会成全我 \n每天都要被闹钟吵醒 \n匆忙早餐的早晨 \n忙碌的一天和 \n永远没人说晚安的夜晚' \n永远睡不够的早晨 \n永远赚不够钱的工作 \n我想 \n就这样吧 。 \n我不想我的字典里 \n有后悔二字。",
+      "coverImgUrl": "http://p1.music.126.net/ITo4TrdQRhy2G3vgzDnVxA==/109951163908032989.jpg?param=400y400",
+      "songNum": 54,
+      "playCount": 103570
     }
   ]
 }
