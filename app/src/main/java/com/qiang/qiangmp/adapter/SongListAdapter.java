@@ -1,6 +1,7 @@
 package com.qiang.qiangmp.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,7 +12,12 @@ import android.widget.TextView;
 
 import com.qiang.qiangmp.R;
 import com.qiang.qiangmp.bean.SongList;
+import com.qiang.qiangmp.util.MyLog;
+import com.qiang.qiangmp.util.load_web_image.AsnycImageLoader;
+import com.qiang.qiangmp.util.load_web_image.FileCache;
+import com.qiang.qiangmp.util.load_web_image.MemoryCache;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -22,9 +28,17 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.MyView
     private Context mContext;
     private List<SongList> data;
 
+    private AsnycImageLoader imageLoader;
+
+
     public SongListAdapter(Context context, List<SongList> data) {
         this.mContext = context;
         this.data = data;
+        MemoryCache memoryCache = new MemoryCache();
+        File sdCard = android.os.Environment.getExternalStorageDirectory();
+        File cacheDir = new File(sdCard, "com_qiang_qiangmp");
+        FileCache fileCache = new FileCache(mContext, cacheDir, "song_list_image");
+        imageLoader = new AsnycImageLoader(mContext, memoryCache, fileCache);
     }
 
     @NonNull
@@ -44,7 +58,13 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.MyView
         myViewHolder.tvName.setText(sl.getName());
         myViewHolder.itemView.setTag(sl.getId());
         myViewHolder.ivPic.setTag(sl.getPic());
-        myViewHolder.ivPic.setImageResource(R.drawable.ic_cloud_download_black_48dp);
+        Bitmap bmp = imageLoader.loadBitmap(myViewHolder.ivPic, sl.getPic());
+        MyLog.d("SongListAdapter", "" + (bmp == null ? 1 : 0));
+        if (bmp == null) {
+            myViewHolder.ivPic.setImageResource(R.drawable.ic_cloud_download_black_48dp);
+        } else {
+            myViewHolder.ivPic.setImageBitmap(bmp);
+        }
     }
 
     @Override
