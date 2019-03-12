@@ -50,4 +50,24 @@ public interface QiangMPConstants {
      * 获取网易云音乐热门歌单的url
      */
     String URL_NETEASE_SONG_LIST = "https://api.bzqll.com/music/netease/hotSongList?key=579621905&cat=%E5%85%A8%E9%83%A8&limit=15&offset=0";
+
+    /**
+     * qq音乐平台代码
+     */
+    int PLATFORM_CODE_QQ = 0;
+
+    /**
+     * 网易云音乐平台代码
+     */
+    int PLATFORM_CODE_NETEASE = 1;
+
+    /**
+     * 获取QQ音乐歌单信息的url
+     */
+    String URL_SONG_LIST_DETAIL_QQ = "https://api.bzqll.com/music/tencent/songList?key=579621905&id=";
+
+    /**
+     * 获取网易云音乐歌单信息的url
+     */
+    String URL_SONG_LIST_DETAIL_NETEASE = "https://api.bzqll.com/music/netease/songList?key=579621905&id=";
 }

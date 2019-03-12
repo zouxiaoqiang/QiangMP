@@ -98,7 +98,7 @@ public class MainActivity extends BaseActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            qqSlAdapter = new SongListAdapter(MainActivity.this, qqSlList);
+            qqSlAdapter = new SongListAdapter(MainActivity.this, qqSlList, QiangMPConstants.PLATFORM_CODE_QQ);
             rvQQSl.setLayoutManager(new GridLayoutManager(this, 3));
             rvQQSl.setAdapter(qqSlAdapter);
         }, error -> Toast.makeText(MainActivity.this, "推荐歌单获取失败", Toast.LENGTH_SHORT).show());
@@ -120,7 +120,7 @@ public class MainActivity extends BaseActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            neteaseSlAdapter = new SongListAdapter(MainActivity.this, neteaseSlList);
+            neteaseSlAdapter = new SongListAdapter(MainActivity.this, neteaseSlList, QiangMPConstants.PLATFORM_CODE_NETEASE);
             rvNeteaseSl.setLayoutManager(new GridLayoutManager(this, 3));
             rvNeteaseSl.setAdapter(neteaseSlAdapter);
         }, error -> Toast.makeText(MainActivity.this, "推荐歌单获取失败", Toast.LENGTH_SHORT).show());
@@ -211,5 +211,14 @@ public class MainActivity extends BaseActivity {
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        rvQQSl.setAdapter(null);
+        qqSlAdapter.destroy();
+        rvNeteaseSl.setAdapter(null);
+        neteaseSlAdapter.destroy();
     }
 }

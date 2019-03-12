@@ -1,6 +1,7 @@
 package com.qiang.qiangmp.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -11,9 +12,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.qiang.qiangmp.R;
+import com.qiang.qiangmp.activity.SongListActivity;
 import com.qiang.qiangmp.bean.SongList;
-import com.qiang.qiangmp.util.MyLog;
-import com.qiang.qiangmp.util.load_web_image.AsnycImageLoader;
+import com.qiang.qiangmp.util.load_web_image.AsyncImageLoader;
 import com.qiang.qiangmp.util.load_web_image.FileCache;
 import com.qiang.qiangmp.util.load_web_image.MemoryCache;
 
@@ -27,18 +28,23 @@ import java.util.List;
 public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.MyViewHolder> {
     private Context mContext;
     private List<SongList> data;
+    /**
+     *
+     */
+    private int platform;
 
-    private AsnycImageLoader imageLoader;
+    private AsyncImageLoader imageLoader;
 
 
-    public SongListAdapter(Context context, List<SongList> data) {
+    public SongListAdapter(Context context, List<SongList> data, int platform) {
         this.mContext = context;
         this.data = data;
+        this.platform=  platform;
         MemoryCache memoryCache = new MemoryCache();
         File sdCard = android.os.Environment.getExternalStorageDirectory();
         File cacheDir = new File(sdCard, "com_qiang_qiangmp");
         FileCache fileCache = new FileCache(mContext, cacheDir, "song_list_image");
-        imageLoader = new AsnycImageLoader(mContext, memoryCache, fileCache);
+        imageLoader = new AsyncImageLoader(mContext, memoryCache, fileCache);
     }
 
     @NonNull
@@ -47,7 +53,11 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.MyView
         View view = LayoutInflater.from(mContext)
                 .inflate(R.layout.item_song_list_adapter, viewGroup, false);
         view.setOnClickListener(v -> {
-
+            Intent intent = new Intent(mContext, SongListActivity.class);
+            String id = (String) v.getTag();
+            intent.putExtra("song_list_id", id);
+            intent.putExtra("platform_code", platform);
+            mContext.startActivity(intent);
         });
         return new MyViewHolder(view);
     }
@@ -59,7 +69,6 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.MyView
         myViewHolder.itemView.setTag(sl.getId());
         myViewHolder.ivPic.setTag(sl.getPic());
         Bitmap bmp = imageLoader.loadBitmap(myViewHolder.ivPic, sl.getPic());
-        MyLog.d("SongListAdapter", "" + (bmp == null ? 1 : 0));
         if (bmp == null) {
             myViewHolder.ivPic.setImageResource(R.drawable.ic_cloud_download_black_48dp);
         } else {
@@ -81,5 +90,9 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.MyView
             tvName = itemView.findViewById(R.id.tv_song_list_name);
             ivPic = itemView.findViewById(R.id.iv_song_list_pic);
         }
+    }
+
+    public void destroy() {
+        imageLoader.destroy();
     }
 }

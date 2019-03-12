@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.widget.ImageView;
 
-import com.qiang.qiangmp.util.MyLog;
 import com.qiang.qiangmp.util.ThreadFactoryBuilder;
 
 import java.io.File;
@@ -26,7 +25,7 @@ import java.util.concurrent.TimeUnit;
  * @author xiaoqiang
  * @date 19-3-11
  */
-public class AsnycImageLoader {
+public class AsyncImageLoader {
     private MemoryCache mMemoryCache;
     private FileCache mFileCache;
     private ExecutorService mExecutorService;
@@ -41,7 +40,7 @@ public class AsnycImageLoader {
      */
     private final List<LoadPhotoTask> mTaskQueue = new ArrayList<>();
 
-    public AsnycImageLoader(Context context, MemoryCache memoryCache, FileCache fileCache) {
+    public AsyncImageLoader(Context context, MemoryCache memoryCache, FileCache fileCache) {
         mMemoryCache = memoryCache;
         mFileCache = fileCache;
         ThreadFactory tf = new ThreadFactoryBuilder()
@@ -177,5 +176,18 @@ public class AsnycImageLoader {
                 imageView.setImageBitmap(bitmap);
             }
         }
+    }
+
+    /**
+     * 释放资源
+     */
+    public void destroy() {
+        mMemoryCache.clear();
+        mMemoryCache = null;
+        mapImageViews.clear();
+        mapImageViews = null;
+        mTaskQueue.clear();
+        mExecutorService.shutdown();
+        mExecutorService = null;
     }
 }
