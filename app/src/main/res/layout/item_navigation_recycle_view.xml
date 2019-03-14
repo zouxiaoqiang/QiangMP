@@ -1,7 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:background="#242424"
     android:layout_margin="5dp"
     android:orientation="vertical">
 
@@ -13,7 +12,6 @@
         android:ellipsize="end"
         android:gravity="center_vertical"
         android:maxLines="1"
-        android:textColor="#ffffff"
         android:textSize="20sp" />
 
     <TextView
@@ -24,7 +22,6 @@
         android:ellipsize="end"
         android:gravity="center_vertical"
         android:maxLines="1"
-        android:textColor="#ffffff"
         android:textSize="15sp" />
 
 </LinearLayout>

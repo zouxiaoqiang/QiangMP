@@ -25,7 +25,7 @@ public class FileCache {
      * @param cacheDir 图片缓存的一级目录
      */
     public FileCache(Context context, File cacheDir, String dir) {
-        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             mCacheDir = new File(cacheDir, dir);
         } else {
             mCacheDir = context.getCacheDir();
