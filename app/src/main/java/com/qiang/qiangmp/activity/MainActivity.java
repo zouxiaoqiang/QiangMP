@@ -1,9 +1,14 @@
 package com.qiang.qiangmp.activity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -53,6 +58,16 @@ public class MainActivity extends BaseActivity {
     private SongListAdapter qqSlAdapter;
     private SongListAdapter neteaseSlAdapter;
 
+    private List<String> mPermissionList = new ArrayList<>();
+
+    private int mRequestCode = 1;
+
+    /**
+     * 应用需要使用的权限
+     */
+    private static final String[] PERMISSIONS = new String[]{
+            Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
     /**
      * recent played song's name and singer
      */
@@ -60,14 +75,45 @@ public class MainActivity extends BaseActivity {
 
     private RecentSongAdapter mRecentSongAdapter;
 
+    private void checkSelfPermissions() {
+        for (String permission : PERMISSIONS) {
+            if (ContextCompat.checkSelfPermission(MainActivity.this,
+                    permission) != PackageManager.PERMISSION_GRANTED) {
+                mPermissionList.add(permission);
+            }
+        }
+        if (!mPermissionList.isEmpty()) {
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    PERMISSIONS, mRequestCode);
+        } else {
+            initView();
+            initHotSongList();
+            configRecycleView();
+            listen();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == mRequestCode) {
+            for (int grantResult : grantResults) {
+                if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                    finish();
+                }
+            }
+            initView();
+            initHotSongList();
+            configRecycleView();
+            listen();
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initView();
-        initHotSongList();
-        configRecycleView();
-        listen();
+        checkSelfPermissions();
     }
 
     private void initView() {
@@ -187,7 +233,9 @@ public class MainActivity extends BaseActivity {
      * 从数据库中更新最近播放歌曲
      */
     private void updateRecentSong() {
+        // 清空内存中的最近播放歌曲数据
         mRecentSongs.clear();
+        // 访问数据库
         Cursor cursor = DbUtil.queryOnSong();
         if (cursor.moveToLast()) {
             do {
@@ -198,6 +246,7 @@ public class MainActivity extends BaseActivity {
                 mRecentSongs.add(song);
             } while (cursor.moveToPrevious());
         }
+        // 提醒适配器数据已经更新
         mRecentSongAdapter.notifyDataSetChanged();
     }
 

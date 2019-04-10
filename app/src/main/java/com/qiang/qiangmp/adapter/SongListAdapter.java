@@ -42,7 +42,7 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.MyView
         this.platform=  platform;
         MemoryCache memoryCache = new MemoryCache();
         File sdCard = android.os.Environment.getExternalStorageDirectory();
-        File cacheDir = new File(sdCard, "com_qiang_qiangmp");
+        File cacheDir = new File(sdCard, "QiangMP");
         FileCache fileCache = new FileCache(mContext, cacheDir, "song_list_image");
         imageLoader = new AsyncImageLoader(mContext, memoryCache, fileCache);
     }

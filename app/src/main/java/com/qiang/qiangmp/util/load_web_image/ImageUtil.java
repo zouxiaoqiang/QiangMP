@@ -25,6 +25,7 @@ class ImageUtil {
         try {
             return BitmapFactory.decodeStream(new FileInputStream(f), null, null);
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -38,7 +39,8 @@ class ImageUtil {
             conn.setConnectTimeout(5000);
             conn.setReadTimeout(5000);
             conn.setInstanceFollowRedirects(true);
-            try (InputStream is = conn.getInputStream(); OutputStream os = new FileOutputStream(f)) {
+            try (InputStream is = conn.getInputStream();
+                 OutputStream os = new FileOutputStream(f)) {
                 copyStream(is, os);
             }
             bitmap = decodeFile(f);

@@ -70,4 +70,9 @@ public interface QiangMPConstants {
      * 获取网易云音乐歌单信息的url
      */
     String URL_SONG_LIST_DETAIL_NETEASE = "https://api.bzqll.com/music/netease/songList?key=579621905&id=";
+
+    /**
+     * 保存歌单图片的本地文件最大数量
+     */
+    int COUNT_FILES_SONG_LIST_IMAGE = 1000;
 }

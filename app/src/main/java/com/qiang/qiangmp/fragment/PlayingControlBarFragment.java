@@ -167,6 +167,7 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
             int time;
             switch (serialNum) {
                 case QiangMPConstants.NUM_SONG_DURATION:
+                    // 设置歌曲名和歌手名
                     tvName.setText(player.getName());
                     tvSinger.setText(player.getSinger());
                     // 毫秒
@@ -197,9 +198,11 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
 
     public void setPlayState() {
         if (mIsPause) {
+            // 暂停
             player.pause();
             mIbtnPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_circle_outline_white_48dp, null));
         } else {
+            // 播放
             player.start();
             mIbtnPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_circle_outline_white_48dp, null));
         }

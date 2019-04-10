@@ -3,9 +3,14 @@ package com.qiang.qiangmp.util.load_web_image;
 import android.content.Context;
 import android.os.Environment;
 
+import com.qiang.qiangmp.util.QiangMPConstants;
+
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+
+import static com.qiang.qiangmp.util.QiangMPConstants.COUNT_FILES_SONG_LIST_IMAGE;
 
 /**
  * 二级缓存
@@ -30,8 +35,12 @@ public class FileCache {
         } else {
             mCacheDir = context.getCacheDir();
         }
+        // 如果目录不存在，则创建目录
+        // 如果目录下的文件数量超过给定的最大值，则清空文件夹
         if (!mCacheDir.exists()) {
             mCacheDir.mkdirs();
+        } else if (mCacheDir.listFiles().length > COUNT_FILES_SONG_LIST_IMAGE) {
+            mCacheDir.delete();
         }
     }
 

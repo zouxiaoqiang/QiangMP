@@ -1,6 +1,5 @@
 package com.qiang.qiangmp.activity;
 
-import android.content.pm.PackageManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

@@ -49,16 +49,18 @@ public class MusicPlayService extends Service {
      * 将最近播放歌曲写入数据库
      */
     private void storePlayedSong() {
+        // 根据将要播放的歌曲在播放列表中的位置，获取当前播放歌曲信息
         Song song = QiangMpApplication.globalSongList.get(QiangMpApplication.globalSongPos);
         String name = song.getName();
         String singer = song.getSinger();
         String url = song.getUrl();
+        // 如果最近播放列表已满，则把表头元素删除。
         if (player.getPlayedSongCount() >= QiangMPConstants.MAX_SONG_PLAY_COUNT) {
             DbUtil.deleteOnSong(1);
             DbUtil.insertOnSong(player.getPlayedSongCount(), name, singer, url);
         } else {
             DbUtil.insertOnSong(name, singer, url);
-            player.setPlayedSongCount(player.getPlayedSongCount());
+            player.setPlayedSongCount(player.getPlayedSongCount() + 1);
         }
     }
 
@@ -79,22 +81,28 @@ public class MusicPlayService extends Service {
 
     private class MusicTimeThread extends Thread {
         @Override
+        // 在线程中执行
         public void run() {
             int lastPosition = 0;
             while (player != null) {
                 if (player.isPlaying()) {
                     int time = player.getCurrentPosition();
+                    // 如果当前时长小于上一次记录的时长，则证明当前歌曲已经更新，
+                    // 马上结束掉这个线程。
                     if (time < lastPosition) {
                         break;
                     } else {
                         lastPosition = time;
                     }
                     Intent intent = new Intent(QiangMPConstants.ACTION_SONG_CURRENT_POSITION);
+                    //把当前进度暂时存储在Intent对象中
                     intent.putExtra("time", time);
                     intent.putExtra("serial_num", QiangMPConstants.NUM_SONG_CURRENT_POSITION);
+                    // 发送广播
                     sendBroadcast(intent);
                 }
                 try {
+                    // 每隔一秒发送一次当前时长的广播，需要捕捉中断异常
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
