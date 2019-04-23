@@ -34,7 +34,15 @@ public class Player {
         return isPrepare;
     }
 
-    public Player() {
+    private static class PlayerClassInstance {
+        private static final Player INSTANCE = new Player();
+    }
+
+    public static Player getInstance() {
+        return PlayerClassInstance.INSTANCE;
+    }
+
+    private Player() {
         initMediaPlayer();
     }
 

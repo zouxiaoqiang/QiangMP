@@ -34,6 +34,7 @@
             android:inputType="text"
             android:maxLines="1"
             android:textColor="#000000"
+            android:textCursorDrawable="@color/colorBlue"
             android:textSize="20sp"
             tools:ignore="Autofill,LabelFor,RtlHardcoded,TextFields" />
 

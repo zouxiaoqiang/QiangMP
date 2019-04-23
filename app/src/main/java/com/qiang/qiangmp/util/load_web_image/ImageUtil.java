@@ -3,8 +3,6 @@ package com.qiang.qiangmp.util.load_web_image;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import com.qiang.qiangmp.util.MyLog;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -60,9 +58,6 @@ class ImageUtil {
 
     /**
      * 将图片缓存到磁盘
-     *
-     * @param is
-     * @param os
      */
     private static void copyStream(InputStream is, OutputStream os) {
         final int bufferSize = 1024;

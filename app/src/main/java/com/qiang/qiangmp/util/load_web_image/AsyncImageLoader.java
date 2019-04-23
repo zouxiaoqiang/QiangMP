@@ -53,8 +53,6 @@ public class AsyncImageLoader {
 
     /**
      * 根据url加载相应的图片
-     *
-     * @param url
      * @return 先从内存中获取图片，若没有，则异步从文件中获取图片，还是没有，就只能从网络端下载图片
      */
     public Bitmap loadBitmap(ImageView imageView, String url) {
@@ -98,10 +96,6 @@ public class AsyncImageLoader {
 
     /**
      * 该ImageView是否已经加载过图片
-     *
-     * @param imageView
-     * @param url
-     * @return
      */
     private boolean imageViewReused(ImageView imageView, String url) {
         String tag = mapImageViews.get(imageView);
@@ -116,9 +110,6 @@ public class AsyncImageLoader {
 
     /**
      * 从缓存文件或者网络端获取图片
-     *
-     * @param url
-     * @return
      */
     private Bitmap getBitmapByUrl(String url) {
         File f = mFileCache.getFile(url);

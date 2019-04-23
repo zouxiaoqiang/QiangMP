@@ -12,18 +12,19 @@ import android.widget.TextView;
 import com.qiang.qiangmp.R;
 import com.qiang.qiangmp.bean.Song;
 import com.qiang.qiangmp.service.MusicPlayService;
+import com.qiang.qiangmp.util.Player;
 
 import java.util.List;
 
 import static com.qiang.qiangmp.QiangMpApplication.globalSongList;
 import static com.qiang.qiangmp.QiangMpApplication.globalSongPos;
-import static com.qiang.qiangmp.QiangMpApplication.player;
 
 /**
  * @author xiaoqiang
  * @date 19-3-7
  */
 public class RecentSongAdapter extends RecyclerView.Adapter<RecentSongAdapter.MyViewHolder> {
+    private static final String TAG = "RecentSongAdapter";
     private Context context;
     private List<Song> data;
 
@@ -43,6 +44,7 @@ public class RecentSongAdapter extends RecyclerView.Adapter<RecentSongAdapter.My
             globalSongPos = (int) v.getTag();
             Song song = globalSongList.get(globalSongPos);
             String url = song.getUrl();
+            Player player = Player.getInstance();
             player.setName(song.getName());
             player.setSinger(song.getSinger());
             Intent intent = new Intent(context, MusicPlayService.class);

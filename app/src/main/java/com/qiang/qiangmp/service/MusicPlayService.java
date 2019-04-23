@@ -7,6 +7,8 @@ import android.os.IBinder;
 import com.qiang.qiangmp.QiangMpApplication;
 import com.qiang.qiangmp.bean.Song;
 import com.qiang.qiangmp.util.DbUtil;
+import com.qiang.qiangmp.util.MyLog;
+import com.qiang.qiangmp.util.Player;
 import com.qiang.qiangmp.util.QiangMPConstants;
 import com.qiang.qiangmp.util.ThreadFactoryBuilder;
 
@@ -16,8 +18,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static com.qiang.qiangmp.QiangMpApplication.player;
-
 
 /**
  * @author xiaoq
@@ -25,6 +25,8 @@ import static com.qiang.qiangmp.QiangMpApplication.player;
  */
 public class MusicPlayService extends Service {
     private static final String TAG = "MusicPlayService";
+
+    private Player player = Player.getInstance();
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -54,9 +56,17 @@ public class MusicPlayService extends Service {
         String name = song.getName();
         String singer = song.getSinger();
         String url = song.getUrl();
+
+        // 删除最近播放列表中已存在的歌曲
+        DbUtil.deleteOnSong(name, singer, url);
+
         // 如果最近播放列表已满，则把表头元素删除。
         if (player.getPlayedSongCount() >= QiangMPConstants.MAX_SONG_PLAY_COUNT) {
-            DbUtil.deleteOnSong(1);
+            int count = DbUtil.deleteOnSong(1);
+            if (count == 0) {
+                MyLog.e(TAG, "删除数据库表头字段失败");
+                return;
+            }
             DbUtil.insertOnSong(player.getPlayedSongCount(), name, singer, url);
         } else {
             DbUtil.insertOnSong(name, singer, url);
@@ -86,6 +96,7 @@ public class MusicPlayService extends Service {
             while (player != null) {
                 if (player.isPlaying()) {
                     int time = player.getCurrentPosition();
+
                     if (time < lastPosition) {
                         break;
                     } else {

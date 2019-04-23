@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.qiang.qiangmp.R;
@@ -28,6 +29,7 @@ import com.qiang.qiangmp.adapter.SongListAdapter;
 import com.qiang.qiangmp.bean.Song;
 import com.qiang.qiangmp.bean.SongList;
 import com.qiang.qiangmp.util.DbUtil;
+import com.qiang.qiangmp.util.Player;
 import com.qiang.qiangmp.util.QiangMPConstants;
 
 import org.json.JSONArray;
@@ -36,9 +38,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.qiang.qiangmp.QiangMpApplication.player;
-
 
 /**
  * @author xiaoq
@@ -128,6 +127,7 @@ public class MainActivity extends BaseActivity {
         rvQQSl = findViewById(R.id.rv_song_list_qq);
         rvNeteaseSl = findViewById(R.id.rv_song_list_netease);
 
+        Response.ErrorListener songListErrorListener = error -> Toast.makeText(MainActivity.this, "推荐歌单获取失败", Toast.LENGTH_SHORT).show();
         StringRequest findQQSl = new StringRequest(QiangMPConstants.URL_QQ_SONG_LIST, response -> {
             try {
                 JSONObject jsonObject = new JSONObject(response);
@@ -147,7 +147,7 @@ public class MainActivity extends BaseActivity {
             qqSlAdapter = new SongListAdapter(MainActivity.this, qqSlList, QiangMPConstants.PLATFORM_CODE_QQ);
             rvQQSl.setLayoutManager(new GridLayoutManager(this, 3));
             rvQQSl.setAdapter(qqSlAdapter);
-        }, error -> Toast.makeText(MainActivity.this, "推荐歌单获取失败", Toast.LENGTH_SHORT).show());
+        }, songListErrorListener);
         requestQueue.add(findQQSl);
 
         StringRequest findNeteaseSl = new StringRequest(QiangMPConstants.URL_NETEASE_SONG_LIST, response -> {
@@ -169,18 +169,15 @@ public class MainActivity extends BaseActivity {
             neteaseSlAdapter = new SongListAdapter(MainActivity.this, neteaseSlList, QiangMPConstants.PLATFORM_CODE_NETEASE);
             rvNeteaseSl.setLayoutManager(new GridLayoutManager(this, 3));
             rvNeteaseSl.setAdapter(neteaseSlAdapter);
-        }, error -> Toast.makeText(MainActivity.this, "推荐歌单获取失败", Toast.LENGTH_SHORT).show());
+        }, songListErrorListener);
         requestQueue.add(findNeteaseSl);
     }
 
     private void listen() {
         mToolbar.setOnMenuItemClickListener(menuItem -> {
-            switch (menuItem.getItemId()) {
-                case R.id.action_search:
-                    Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-                    startActivity(intent);
-                    break;
-                default:
+            if (menuItem.getItemId() == R.id.action_search) {
+                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                startActivity(intent);
             }
             return true;
         });
@@ -197,18 +194,15 @@ public class MainActivity extends BaseActivity {
         mDrawerLayout.addDrawerListener(toggle);
 
         mNavigationView.setNavigationItemSelectedListener(menuItem -> {
-            switch (menuItem.getItemId()) {
-                case R.id.item_clear_all:
-                    new ClearAllOnSongThread().start();
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    player.setPlayedSongCount(0);
-                    updateRecentSong();
-                    break;
-                default:
+            if (menuItem.getItemId() == R.id.item_clear_all) {
+                new ClearAllOnSongThread().start();
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Player.getInstance().setPlayedSongCount(0);
+                updateRecentSong();
             }
             return false;
         });

@@ -2,8 +2,6 @@ package com.qiang.qiangmp.util.load_web_image;
 
 import android.graphics.Bitmap;
 
-import com.qiang.qiangmp.util.MyLog;
-
 import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -59,7 +57,7 @@ public class MemoryCache {
     /**
      * 清除所有缓存
      */
-    public void clear() {
+    void clear() {
         for (Map.Entry<String, SoftReference<Bitmap>> entry : mCacheMap.entrySet()) {
             SoftReference<Bitmap> ref = entry.getValue();
             if (ref != null) {

@@ -10,10 +10,10 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.qiang.qiangmp.QiangMpApplication;
 import com.qiang.qiangmp.R;
 import com.qiang.qiangmp.adapter.SongListDetailAdapter;
 import com.qiang.qiangmp.bean.Song;
+import com.qiang.qiangmp.util.Player;
 import com.qiang.qiangmp.util.QiangMPConstants;
 
 import org.json.JSONArray;
@@ -25,7 +25,6 @@ import java.util.List;
 
 import static com.qiang.qiangmp.QiangMpApplication.globalSongList;
 import static com.qiang.qiangmp.QiangMpApplication.globalSongPos;
-import static com.qiang.qiangmp.QiangMpApplication.player;
 
 /**
  * 歌单详细界面
@@ -113,6 +112,7 @@ public class SongListActivity extends BaseActivity {
         globalSongList.addAll(songInSl);
         globalSongPos = position;
         Song song = globalSongList.get(globalSongPos);
+        Player player = Player.getInstance();
         player.setName(song.getName());
         player.setSinger(song.getSinger());
         return song.getUrl();

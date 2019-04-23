@@ -2,8 +2,6 @@ package com.qiang.qiangmp;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 
 import com.qiang.qiangmp.bean.Song;
 import com.qiang.qiangmp.util.DbUtil;
@@ -34,11 +32,6 @@ public class QiangMpApplication extends Application {
     public static List<Song> globalSongList = new ArrayList<>();
 
     /**
-     * 控制歌曲的状态
-     */
-    public static Player player = new Player();
-
-    /**
      * 本地数据库
      */
     @SuppressLint("StaticFieldLeak")
@@ -49,6 +42,6 @@ public class QiangMpApplication extends Application {
         super.onCreate();
         dbHelper = new MyDatabaseHelper(this);
         dbHelper.getWritableDatabase();
-        player.setPlayedSongCount(DbUtil.queryCountOnSOng());
+        Player.getInstance().setPlayedSongCount(DbUtil.queryCountOnSong());
     }
 }

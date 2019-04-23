@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,6 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.qiang.qiangmp.QiangMpApplication;
 import com.qiang.qiangmp.R;
 import com.qiang.qiangmp.bean.Song;
 import com.qiang.qiangmp.service.MusicPlayService;
@@ -26,16 +24,12 @@ import com.qiang.qiangmp.util.Player;
 import com.qiang.qiangmp.util.QiangMPConstants;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 
 import static com.qiang.qiangmp.QiangMpApplication.globalSongList;
 import static com.qiang.qiangmp.QiangMpApplication.globalSongPos;
 import static com.qiang.qiangmp.QiangMpApplication.mIsPause;
-import static com.qiang.qiangmp.QiangMpApplication.player;
-
 
 /**
  * @author xiaoq
@@ -43,12 +37,14 @@ import static com.qiang.qiangmp.QiangMpApplication.player;
  */
 public class PlayingControlBarFragment extends Fragment implements View.OnClickListener {
 
+    private static final String TAG = "PlayingControlBarFragment";
 
     private SeekBar mSeekBar;
     private TextView mTextViewCurrentTime, mTextViewDuration;
     private ImageButton mIbtnPlay;
     private MusicPlayBroadcastReceiver mMusicPlayBroadcastReceiver;
     private TextView tvName, tvSinger;
+    private Player player = Player.getInstance();
 
     private static IntentFilter musicPlayerFilter = new IntentFilter();
 
@@ -151,6 +147,8 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
     private void startMusicPlayerService() {
         Song song = globalSongList.get(globalSongPos);
         String url = song.getUrl();
+        player.setName(song.getName());
+        player.setSinger(song.getSinger());
         Intent i = new Intent(getActivity(), MusicPlayService.class);
         i.putExtra("url", url);
         Objects.requireNonNull(getActivity()).startService(i);

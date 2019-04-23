@@ -16,6 +16,7 @@ import com.qiang.qiangmp.R;
 import com.qiang.qiangmp.adapter.SongAdapter;
 import com.qiang.qiangmp.bean.Song;
 import com.qiang.qiangmp.service.MusicPlayService;
+import com.qiang.qiangmp.util.Player;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,7 +28,6 @@ import java.util.Objects;
 
 import static com.qiang.qiangmp.QiangMpApplication.globalSongList;
 import static com.qiang.qiangmp.QiangMpApplication.globalSongPos;
-import static com.qiang.qiangmp.QiangMpApplication.player;
 
 
 /**
@@ -51,6 +51,7 @@ public abstract class BaseMusicSearchFragment extends Fragment {
             globalSongPos = position;
             Song song = globalSongList.get(globalSongPos);
             String url = song.getUrl();
+            Player player = Player.getInstance();
             player.setName(song.getName());
             player.setSinger(song.getSinger());
             Intent i = new Intent(getActivity(), MusicPlayService.class);

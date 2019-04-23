@@ -3,10 +3,7 @@ package com.qiang.qiangmp.util.load_web_image;
 import android.content.Context;
 import android.os.Environment;
 
-import com.qiang.qiangmp.util.QiangMPConstants;
-
 import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 

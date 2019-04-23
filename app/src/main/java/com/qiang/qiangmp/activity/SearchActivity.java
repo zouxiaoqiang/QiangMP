@@ -16,7 +16,6 @@ import com.qiang.qiangmp.adapter.MusicSearchFragmentPagerAdapter;
  * @date 19-1-9
  */
 public class SearchActivity extends BaseActivity implements View.OnClickListener {
-    private static final String TAG = "SearchActivity";
     /**
      * 搜索关键词
      */
@@ -72,11 +71,8 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.ibtn_back:
-                finish();
-                break;
-            default:
+        if (v.getId() == R.id.ibtn_back) {
+            finish();
         }
     }
 }

@@ -16,10 +16,9 @@ public class DbUtil {
     /**
      * @param id delete by id on Song
      */
-    public static void deleteOnSong(int id) {
-        String sql = "delete from Song where id = ?";
+    public static int deleteOnSong(int id) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        db.execSQL(sql, new String[]{"1"});
+        return db.delete("Song", "id = ?", new String[]{String.valueOf(id)});
     }
 
     public static void insertOnSong(int id, String name, String singer, String url) {
@@ -48,7 +47,10 @@ public class DbUtil {
         db.execSQL(sql);
     }
 
-    public static int queryCountOnSOng() {
+    /**
+     * 查询最近播放列表中的歌曲数量
+     */
+    public static int queryCountOnSong() {
         String sql = "select count(*) from Song";
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         @SuppressLint("Recycle")
@@ -58,5 +60,14 @@ public class DbUtil {
             count = cursor.getInt(0);
         }
         return count;
+    }
+
+    /**
+     * 删除重复的歌曲
+     */
+    public static int deleteOnSong(String name, String singer, String url) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        return db.delete("Song", "name = ? and singer = ? and url = ?",
+                new String[]{name, singer, url});
     }
 }
