@@ -20,7 +20,7 @@
             android:id="@+id/ibtn_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#ffffff"
+            android:background="@drawable/back_box"
             android:src="@drawable/ic_arrow_back_black_24dp"
             tools:ignore="ContentDescription,RtlHardcoded" />
 
@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:background="#ffffff"
+            android:background="@drawable/edit_text_shape"
             android:imeOptions="actionSearch"
             android:inputType="text"
             android:maxLines="1"
@@ -44,11 +44,11 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="10dp"
-        android:background="#787878"
-        app:tabIndicatorColor="#D1CECE"
+        android:background="@color/colorGray"
+        app:tabIndicatorColor="@color/colorWhiteDark"
         app:tabMode="fixed"
         app:tabSelectedTextColor="#0D1F2F"
-        app:tabTextColor="#D1CECE" />
+        app:tabTextColor="@color/colorWhite" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -56,17 +56,19 @@
 
         <android.support.v4.view.ViewPager
             android:id="@+id/viewpager"
-            android:layout_above="@id/activity_base"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="10dp" />
+            android:layout_above="@id/activity_base"
+            android:layout_margin="2dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/song_list_box" />
 
         <include
             android:id="@+id/activity_base"
             layout="@layout/activity_base"
-            android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
-            android:layout_height="100dp" />
+            android:layout_height="100dp"
+            android:layout_alignParentBottom="true" />
 
     </RelativeLayout>
 

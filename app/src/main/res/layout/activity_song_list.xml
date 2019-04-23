@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
-            android:background="#ffffff"
+            android:background="@drawable/back_box"
             android:src="@drawable/ic_arrow_back_black_24dp"
             tools:ignore="ContentDescription,RtlHardcoded" />
 
@@ -33,7 +33,7 @@
             android:ellipsize="end"
             android:gravity="center"
             android:maxLines="2"
-            android:textColor="#ffffff"
+            android:textColor="@color/colorWhite"
             android:textSize="24sp" />
 
     </LinearLayout>
@@ -41,7 +41,8 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_song_list_detail"
         android:layout_width="match_parent"
-        android:background="#ffffff"
+        android:background="@drawable/song_list_box"
+        android:padding="10dp"
         android:layout_weight="1"
         android:layout_height="0dp" />
 

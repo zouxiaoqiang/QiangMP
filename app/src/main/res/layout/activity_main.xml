@@ -12,12 +12,18 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:ignore="RedundantNamespace">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+
+        <View
+            android:layout_width="match_parent"
+            android:background="@drawable/dividing_line"
+            android:layout_height="1dp"/>
 
         <ScrollView
             android:layout_width="match_parent"
@@ -54,6 +60,11 @@
 
                 </LinearLayout>
 
+                <View
+                    android:layout_width="match_parent"
+                    android:background="@drawable/dividing_line"
+                    android:layout_height="1dp"/>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -80,6 +91,11 @@
             </LinearLayout>
 
         </ScrollView>
+
+        <View
+            android:layout_width="match_parent"
+            android:background="@drawable/dividing_line"
+            android:layout_height="4dp"/>
 
         <include
             layout="@layout/activity_base"

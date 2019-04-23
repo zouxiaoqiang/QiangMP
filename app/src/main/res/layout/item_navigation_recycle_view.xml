@@ -2,6 +2,7 @@
     android:layout_width="match_parent"
     android:layout_height="60dp"
     android:layout_margin="5dp"
+    android:background="@drawable/song_box"
     android:orientation="vertical">
 
     <TextView
@@ -12,6 +13,7 @@
         android:ellipsize="end"
         android:gravity="center_vertical"
         android:maxLines="1"
+        android:textColor="@color/colorDarkSong"
         android:textSize="20sp" />
 
     <TextView
@@ -22,6 +24,7 @@
         android:ellipsize="end"
         android:gravity="center_vertical"
         android:maxLines="1"
+        android:textColor="@color/colorDarkSinger"
         android:textSize="15sp" />
 
 </LinearLayout>

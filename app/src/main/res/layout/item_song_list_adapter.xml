@@ -18,6 +18,7 @@
         android:id="@+id/tv_song_list_name"
         android:layout_width="match_parent"
         android:textSize="12sp"
+        android:textColor="@color/colorDarkSong"
         android:maxLines="2"
         android:ellipsize="end"
         android:gravity="center"
