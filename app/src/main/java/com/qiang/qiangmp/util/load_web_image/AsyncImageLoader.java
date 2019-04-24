@@ -1,13 +1,16 @@
 package com.qiang.qiangmp.util.load_web_image;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.widget.ImageView;
 
 import com.qiang.qiangmp.util.ThreadFactoryBuilder;
 
-import java.io.File;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,8 +29,7 @@ import java.util.concurrent.TimeUnit;
  * @date 19-3-11
  */
 public class AsyncImageLoader {
-    private MemoryCache mMemoryCache;
-    private FileCache mFileCache;
+    private ImageCache mImageCache;
     private ExecutorService mExecutorService;
 
     /**
@@ -40,9 +42,7 @@ public class AsyncImageLoader {
      */
     private final List<LoadPhotoTask> mTaskQueue = new ArrayList<>();
 
-    public AsyncImageLoader(Context context, MemoryCache memoryCache, FileCache fileCache) {
-        mMemoryCache = memoryCache;
-        mFileCache = fileCache;
+    public AsyncImageLoader() {
         ThreadFactory tf = new ThreadFactoryBuilder()
                 .setNamePrefix("load_pic")
                 .setDaemon(false)
@@ -52,12 +52,19 @@ public class AsyncImageLoader {
     }
 
     /**
+     * 依赖注入
+     */
+    public void setImageCache(ImageCache imageCache) {
+        mImageCache = imageCache;
+    }
+
+    /**
      * 根据url加载相应的图片
-     * @return 先从内存中获取图片，若没有，则异步从文件中获取图片，还是没有，就只能从网络端下载图片
+     * @return 先从内存或文件中获取图片，若没有，异步从网络端下载图片
      */
     public Bitmap loadBitmap(ImageView imageView, String url) {
         mapImageViews.put(imageView, url);
-        Bitmap bitmap = mMemoryCache.get(url);
+        Bitmap bitmap = mImageCache.get(url);
         if (bitmap == null) {
             enqueueLoadPhoto(url, imageView);
         }
@@ -109,15 +116,31 @@ public class AsyncImageLoader {
     }
 
     /**
-     * 从缓存文件或者网络端获取图片
+     * 从网络端加载图片
      */
-    private Bitmap getBitmapByUrl(String url) {
-        File f = mFileCache.getFile(url);
-        Bitmap b = ImageUtil.decodeFile(f);
-        if (b != null) {
-            return b;
+    private Bitmap loadBitmapFromWeb(String url) {
+        HttpURLConnection conn = null;
+        try {
+            Bitmap bitmap;
+            URL imageUrl = new URL(url);
+            conn = (HttpURLConnection) imageUrl.openConnection();
+            conn.setConnectTimeout(5000);
+            conn.setReadTimeout(5000);
+            conn.setInstanceFollowRedirects(true);
+            bitmap = BitmapFactory.decodeStream(conn.getInputStream());
+
+            return bitmap;
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
         }
-        return ImageUtil.loadBitmapFromWeb(url, f);
     }
 
     class LoadPhotoTask implements Runnable {
@@ -134,14 +157,14 @@ public class AsyncImageLoader {
             if (imageViewReused(imageView, url)) {
                 removeTask(this);
             } else {
-                Bitmap bmp = getBitmapByUrl(url);
-                mMemoryCache.put(url, bmp);
+                Bitmap bmp = loadBitmapFromWeb(url);
                 if (!imageViewReused(imageView, url)) {
                     BitmapDisplay bd = new BitmapDisplay(bmp, imageView, url);
                     Activity a = (Activity) imageView.getContext();
                     a.runOnUiThread(bd);
                 }
                 removeTask(this);
+                mImageCache.put(url, bmp);
             }
         }
 
@@ -173,8 +196,7 @@ public class AsyncImageLoader {
      * 释放资源
      */
     public void destroy() {
-        mMemoryCache.clear();
-        mMemoryCache = null;
+        mImageCache.clear();
         mapImageViews.clear();
         mapImageViews = null;
         mTaskQueue.clear();

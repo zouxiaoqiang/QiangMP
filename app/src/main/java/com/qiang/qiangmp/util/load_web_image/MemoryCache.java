@@ -1,6 +1,7 @@
 package com.qiang.qiangmp.util.load_web_image;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import java.lang.ref.SoftReference;
 import java.util.HashMap;
@@ -13,7 +14,7 @@ import java.util.Map;
  * @author xiaoqiang
  * @date 19-3-11
  */
-public class MemoryCache {
+public class MemoryCache implements ImageCache {
     /**
      * 最大缓存图片数量
      */
@@ -36,7 +37,8 @@ public class MemoryCache {
      * @param url 图片url
      * @return 放回缓存中的图片
      */
-    Bitmap get(String url) {
+    @Override
+    public Bitmap get(String url) {
         if (!mCacheMap.containsKey(url)) {
             return null;
         }
@@ -46,18 +48,17 @@ public class MemoryCache {
 
     /**
      * 将图片加入缓存
-     *
-     * @param url
-     * @param bitmap
      */
-    void put(String url, Bitmap bitmap) {
+    @Override
+    public void put(String url, Bitmap bitmap) {
         mCacheMap.put(url, new SoftReference<>(bitmap));
     }
 
     /**
      * 清除所有缓存
      */
-    void clear() {
+    @Override
+    public void clear() {
         for (Map.Entry<String, SoftReference<Bitmap>> entry : mCacheMap.entrySet()) {
             SoftReference<Bitmap> ref = entry.getValue();
             if (ref != null) {
