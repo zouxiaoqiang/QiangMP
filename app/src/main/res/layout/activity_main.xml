@@ -22,8 +22,8 @@
 
         <View
             android:layout_width="match_parent"
-            android:background="@drawable/dividing_line"
-            android:layout_height="1dp"/>
+            android:layout_height="1dp"
+            android:background="@drawable/dividing_line" />
 
         <ScrollView
             android:layout_width="match_parent"
@@ -62,8 +62,8 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:background="@drawable/dividing_line"
-                    android:layout_height="1dp"/>
+                    android:layout_height="1dp"
+                    android:background="@drawable/dividing_line" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -94,8 +94,8 @@
 
         <View
             android:layout_width="match_parent"
-            android:background="@drawable/dividing_line"
-            android:layout_height="4dp"/>
+            android:layout_height="1dp"
+            android:background="@drawable/dividing_line" />
 
         <include
             layout="@layout/activity_base"

@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -66,6 +67,7 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
         super.onViewCreated(view, savedInstanceState);
         MyLog.d("PlayingControlBarFragment", "onViewCreated");
         initView(view);
+        listen();
     }
 
     private void initView(View view) {
@@ -80,6 +82,40 @@ public class PlayingControlBarFragment extends Fragment implements View.OnClickL
         mIbtnPlay.setOnClickListener(this);
         mIbtnNext.setOnClickListener(this);
         mIbtnPrevious.setOnClickListener(this);
+    }
+
+    private void listen() {
+        // SeekBar滑块的滑动监听
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                // 当用户拖动滑块会触发函数
+                if (fromUser) {
+                    // 改变歌曲进度
+                    player.seekTo(progress);
+                    mSeekBar.setProgress(progress);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                if (!globalSongList.isEmpty()) {
+                    Drawable drawable = getResources().getDrawable(R.drawable.seekbar_thumb_pressed, null);
+                    seekBar.setThumb(drawable);
+                }
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                if (!globalSongList.isEmpty()) {
+                    Drawable drawable = getResources().getDrawable(R.drawable.seekbar_thumb_normal, null);
+                    seekBar.setThumb(drawable);
+                    int progress = seekBar.getProgress();
+                    player.seekTo(progress);
+                    mTextViewCurrentTime.setText(formatDate(progress));
+                }
+            }
+        });
     }
 
     /**

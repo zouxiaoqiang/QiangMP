@@ -92,15 +92,13 @@ public class MusicPlayService extends Service {
     private class MusicTimeThread extends Thread {
         @Override
         public void run() {
-            int lastPosition = 0;
+            int duration = player.getDuration();
             while (player != null) {
                 if (player.isPlaying()) {
                     int time = player.getCurrentPosition();
-
-                    if (time < lastPosition) {
+                    // 若当前歌曲播放完成，结束线程
+                    if (time == duration) {
                         break;
-                    } else {
-                        lastPosition = time;
                     }
                     Intent intent = new Intent(QiangMPConstants.ACTION_SONG_CURRENT_POSITION);
                     intent.putExtra("time", time);

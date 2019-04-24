@@ -170,6 +170,10 @@ public class Player {
         return mediaPlayer.getDuration();
     }
 
+    public void seekTo(int mesc) {
+        mediaPlayer.seekTo(mesc);
+    }
+
     public int getCurrentPosition() {
         return mediaPlayer.getCurrentPosition();
     }
