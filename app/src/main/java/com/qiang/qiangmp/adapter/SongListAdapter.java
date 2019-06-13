@@ -2,7 +2,6 @@ package com.qiang.qiangmp.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,12 +13,8 @@ import android.widget.TextView;
 import com.qiang.qiangmp.R;
 import com.qiang.qiangmp.activity.SongListActivity;
 import com.qiang.qiangmp.bean.SongList;
-import com.qiang.qiangmp.util.load_web_image.AsyncImageLoader;
-import com.qiang.qiangmp.util.load_web_image.FileCache;
-import com.qiang.qiangmp.util.load_web_image.MemoryAndFileCache;
-import com.qiang.qiangmp.util.load_web_image.MemoryCache;
+import com.qiang.qiangmp.util.load_web_image.ImageLoader;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -34,18 +29,22 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.MyView
      */
     private int platform;
 
-    private AsyncImageLoader imageLoader;
+    private ImageLoader imageLoader;
 
 
     public SongListAdapter(Context context, List<SongList> data, int platform) {
         this.mContext = context;
         this.data = data;
         this.platform=  platform;
+        /*
         File sdCard = android.os.Environment.getExternalStorageDirectory();
         File cacheDir = new File(sdCard, "QiangMP");
         MemoryAndFileCache memoryAndFileCache = new MemoryAndFileCache(mContext, cacheDir, "song_list_image");
         imageLoader = new AsyncImageLoader();
         imageLoader.setImageCache(memoryAndFileCache);
+        */
+
+        imageLoader = ImageLoader.build(context);
     }
 
     @NonNull
@@ -69,12 +68,13 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.MyView
         myViewHolder.tvName.setText(sl.getName());
         myViewHolder.itemView.setTag(sl.getId());
         myViewHolder.ivPic.setTag(sl.getPic());
-        Bitmap bmp = imageLoader.loadBitmap(myViewHolder.ivPic, sl.getPic());
-        if (bmp == null) {
-            myViewHolder.ivPic.setImageResource(R.drawable.ic_cloud_download_black_48dp);
-        } else {
-            myViewHolder.ivPic.setImageBitmap(bmp);
-        }
+//        Bitmap bmp = imageLoader.loadBitmap(myViewHolder.ivPic, sl.getPic());
+        imageLoader.bindBitmap(sl.getPic(), myViewHolder.ivPic, 100, 100);
+//        if (bmp == null) {
+//            myViewHolder.ivPic.setImageResource(R.drawable.ic_cloud_download_black_48dp);
+//        } else {
+//            myViewHolder.ivPic.setImageBitmap(bmp);
+//        }
     }
 
     @Override
@@ -93,7 +93,4 @@ public class SongListAdapter extends RecyclerView.Adapter<SongListAdapter.MyView
         }
     }
 
-    public void destroy() {
-        imageLoader.destroy();
-    }
 }

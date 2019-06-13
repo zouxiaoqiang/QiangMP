@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 /**
  * @author xiaoqiang
  * @date 19-4-24
+ * @deprecated
  */
 public interface ImageCache {
     /**

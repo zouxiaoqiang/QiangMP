@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author xiaoqiang
  * @date 19-3-11
+ * @deprecated 使用ImageLoader代替
  */
 public class AsyncImageLoader {
     private ImageCache mImageCache;

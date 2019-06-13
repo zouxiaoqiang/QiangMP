@@ -1,7 +1,6 @@
 package com.qiang.qiangmp.util.load_web_image;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 import java.lang.ref.SoftReference;
 import java.util.HashMap;
@@ -13,6 +12,7 @@ import java.util.Map;
  *
  * @author xiaoqiang
  * @date 19-3-11
+ * @deprecated 使用官方API LruCache代替
  */
 public class MemoryCache implements ImageCache {
     /**

@@ -19,6 +19,7 @@ import static com.qiang.qiangmp.util.QiangMPConstants.COUNT_FILES_SONG_LIST_IMAG
  *
  * @author xiaoqiang
  * @date 19-3-11
+ * @deprecated 使用了第三方框架DiskLruCache代替
  */
 public class FileCache implements ImageCache {
     /**

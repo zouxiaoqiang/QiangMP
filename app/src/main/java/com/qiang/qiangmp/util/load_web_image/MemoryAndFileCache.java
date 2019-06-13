@@ -8,6 +8,7 @@ import java.io.File;
 /**
  * @author xiaoqiang
  * @date 19-4-24
+ * @deprecated
  */
 public class MemoryAndFileCache implements ImageCache {
     private MemoryCache mMemoryCache;

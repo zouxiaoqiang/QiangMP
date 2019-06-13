@@ -44,13 +44,17 @@ public class ThreadFactoryBuilder {
         final String namePrefix = builder.namePrefix;
         final boolean daemon = builder.daemon;
         final int priority = builder.priority;
-        AtomicInteger count = new AtomicInteger(1);
-        return r -> {
-            Thread thread = new Thread(r);
-            thread.setName(namePrefix + "-" + count.getAndIncrement());
-            thread.setDaemon(daemon);
-            thread.setPriority(priority);
-            return thread;
+        return new ThreadFactory() {
+            AtomicInteger count = new AtomicInteger(1);
+
+            @Override
+            public Thread newThread(Runnable r) {
+                Thread thread = new Thread(r);
+                thread.setName(namePrefix + "-" + count.getAndIncrement());
+                thread.setDaemon(daemon);
+                thread.setPriority(priority);
+                return thread;
+            }
         };
     }
 }
